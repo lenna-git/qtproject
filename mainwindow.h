@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include"form_page1.h"
+#include"form_page2.h"
 
 namespace Ui {
 class MainWindow;
@@ -19,6 +20,7 @@ public:
 private:
     Ui::MainWindow *ui;
     Form_page1 *formpage1;
+    Form_page2 *formpage2;
 };
 
 #endif // MAINWINDOW_H

@@ -29,12 +29,15 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
-    form_page1.cpp
+    form_page1.cpp \
+    form_page2.cpp
 
 HEADERS += \
         mainwindow.h \
-    form_page1.h
+    form_page1.h \
+    form_page2.h
 
 FORMS += \
         mainwindow.ui \
-    form_page1.ui
+    form_page1.ui \
+    form_page2.ui

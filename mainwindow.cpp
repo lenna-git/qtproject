@@ -7,11 +7,13 @@
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
-    formpage1(new Form_page1)
+    formpage1(new Form_page1),
+    formpage2(new Form_page2)
 {
     ui->setupUi(this);
     QHBoxLayout *wholelayout = new QHBoxLayout(ui->centralWidget);
 
+    this->resize(1200,800);
 
 
     QWidget *widgetleft = new QWidget;
@@ -23,7 +25,8 @@ MainWindow::MainWindow(QWidget *parent) :
     wholelayout->addWidget(ui->stackedWidget);
 
     ui->stackedWidget->addWidget(formpage1);
-    ui->stackedWidget->setCurrentWidget(formpage1);
+    ui->stackedWidget->addWidget(formpage2);
+    ui->stackedWidget->setCurrentWidget(formpage2);
 
 
 

@@ -30,6 +30,8 @@ Form_page1::Form_page1(QWidget *parent) :
     scaleFactor(1.0)
 {
     ui->setupUi(this);
+    // 设置初始页面大小
+    this->resize(800, 600);
     QVBoxLayout *AllLayout = new QVBoxLayout(this);
 //       this->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
       // 创建图形场景
