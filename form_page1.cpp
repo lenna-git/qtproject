@@ -208,13 +208,23 @@ void Form_page1::drawpdf(QString tempFileName)
     qreal tableTop = 60;
     qreal tableWidth = pageWidth - 2 * margin;
     qreal tableHeight = pageHeight - 120; // 让表格占据整个页面
-    qreal lineHeight = 35; // 增加单元格高度
+    // 计算合适的行高使表格占满页面
+    // 表格约有19个标准行高（包括备注的3行）
+    qreal totalRows = 19; // 估算的总行数
+    qreal lineHeight = (pageHeight - 120) / totalRows; // 动态计算行高使表格占满页面
     qreal col1Width = 100;
     qreal col2Width = 160;
     qreal col3Width = 100;
     qreal col4Width = 100;
 
     // 绘制大标题
+    // 设置表格初始大小（预估）用于背景填充
+    qreal estimatedTableHeight = pageHeight - 120; // 预估表格高度
+    
+    // 先填充表格背景色
+    painter.fillRect(tableLeft, tableTop, tableWidth, estimatedTableHeight, Qt::white);
+
+    // 绘制标题
     font.setPointSize(16);
     font.setBold(true);
     painter.setFont(font);
@@ -224,52 +234,40 @@ void Form_page1::drawpdf(QString tempFileName)
     font.setBold(false);
     painter.setFont(font);
 
-    // 设置表格初始大小（预估）用于背景填充
-    qreal estimatedTableHeight = pageHeight - 120; // 预估表格高度
-    
-    // 先填充表格背景色
-    painter.fillRect(tableLeft, tableTop, tableWidth, estimatedTableHeight, Qt::white);
-
-    // 标准表格布局 - 算法名称和算法一与其他单元格保持一致
+    // 标准表格布局 - 将算法名称及其下方两个空行合并为一个单元格
     qreal currentY = tableTop;
     
     // 绘制第一行
     painter.drawLine(tableLeft, currentY, tableLeft + tableWidth, currentY);
-    painter.drawLine(tableLeft + col1Width, currentY, tableLeft + col1Width, currentY + lineHeight);
+    painter.drawLine(tableLeft + col1Width, currentY, tableLeft + col1Width, currentY + 3 * lineHeight); // 垂直合并三行
     painter.drawLine(tableLeft + col1Width + col2Width, currentY, tableLeft + col1Width + col2Width, currentY + lineHeight);
     painter.drawLine(tableLeft + col1Width + col2Width + col3Width, currentY, tableLeft + col1Width + col2Width + col3Width, currentY + lineHeight);
     painter.drawLine(tableLeft, currentY + lineHeight, tableLeft + tableWidth, currentY + lineHeight);
     
     // 填写第一行内容
-    painter.drawText(QRectF(tableLeft, currentY, col1Width, lineHeight), Qt::AlignCenter | Qt::TextSingleLine, "算法名称");
+    painter.drawText(QRectF(tableLeft, currentY, col1Width, 3 * lineHeight), Qt::AlignCenter, "算法名称"); // 合并单元格文本居中
     painter.drawText(QRectF(tableLeft + col1Width, currentY, col2Width, lineHeight), Qt::AlignCenter | Qt::TextSingleLine, content.algorithmName);
     painter.drawText(QRectF(tableLeft + col1Width + col2Width, currentY, col3Width, lineHeight), Qt::AlignCenter | Qt::TextSingleLine, "长度");
     painter.drawText(QRectF(tableLeft + col1Width + col2Width + col3Width, currentY, col4Width, lineHeight), Qt::AlignCenter | Qt::TextSingleLine, content.length);
     
-    // 绘制第二行
+    // 绘制第二行 - 其他列继续保持单行
     currentY += lineHeight;
-    painter.drawLine(tableLeft, currentY, tableLeft + tableWidth, currentY);
-    painter.drawLine(tableLeft + col1Width, currentY, tableLeft + col1Width, currentY + lineHeight);
     painter.drawLine(tableLeft + col1Width + col2Width, currentY, tableLeft + col1Width + col2Width, currentY + lineHeight);
     painter.drawLine(tableLeft + col1Width + col2Width + col3Width, currentY, tableLeft + col1Width + col2Width + col3Width, currentY + lineHeight);
     painter.drawLine(tableLeft, currentY + lineHeight, tableLeft + tableWidth, currentY + lineHeight);
     
     // 填写第二行内容
-    painter.drawText(QRectF(tableLeft, currentY, col1Width, lineHeight), Qt::AlignCenter | Qt::TextSingleLine, "");
     painter.drawText(QRectF(tableLeft + col1Width, currentY, col2Width, lineHeight), Qt::AlignCenter | Qt::TextSingleLine, "");
     painter.drawText(QRectF(tableLeft + col1Width + col2Width, currentY, col3Width, lineHeight), Qt::AlignCenter | Qt::TextSingleLine, "分组长度");
     painter.drawText(QRectF(tableLeft + col1Width + col2Width + col3Width, currentY, col4Width, lineHeight), Qt::AlignCenter | Qt::TextSingleLine, content.groupLength);
     
-    // 绘制第三行
+    // 绘制第三行 - 其他列继续保持单行
     currentY += lineHeight;
-    painter.drawLine(tableLeft, currentY, tableLeft + tableWidth, currentY);
-    painter.drawLine(tableLeft + col1Width, currentY, tableLeft + col1Width, currentY + lineHeight);
     painter.drawLine(tableLeft + col1Width + col2Width, currentY, tableLeft + col1Width + col2Width, currentY + lineHeight);
     painter.drawLine(tableLeft + col1Width + col2Width + col3Width, currentY, tableLeft + col1Width + col2Width + col3Width, currentY + lineHeight);
     painter.drawLine(tableLeft, currentY + lineHeight, tableLeft + tableWidth, currentY + lineHeight);
     
     // 填写第三行内容
-    painter.drawText(QRectF(tableLeft, currentY, col1Width, lineHeight), Qt::AlignCenter | Qt::TextSingleLine, "");
     painter.drawText(QRectF(tableLeft + col1Width, currentY, col2Width, lineHeight), Qt::AlignCenter | Qt::TextSingleLine, "");
     painter.drawText(QRectF(tableLeft + col1Width + col2Width, currentY, col3Width, lineHeight), Qt::AlignCenter | Qt::TextSingleLine, "分组轮数");
     painter.drawText(QRectF(tableLeft + col1Width + col2Width + col3Width, currentY, col4Width, lineHeight), Qt::AlignCenter | Qt::TextSingleLine, content.groupRoundsLevel2);
