@@ -1,0 +1,54 @@
+# Qt项目忽略规则
+# 编译输出
+*.o
+*.obj
+*.dll
+*.exe
+*.ilk
+*.pdb
+*.exp
+*.lib
+*.so
+*.dylib
+
+# Qt生成的文件
+moc_*
+h*_moc.cpp
+ui_*
+qrc_*
+Makefile
+*.pro.user
+*.pro.user.*
+*.qmake.stash
+
+# 临时文件
+*.tmp
+*.temp
+.DS_Store
+Thumbs.db
+
+# 构建目录
+build/
+build-*
+
+# IDE配置文件
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# 日志文件
+*.log
+*.log.*
+
+# 测试覆盖率
+*.gcno
+*.gcda
+*.gcov
+
+# 其他
+*.autosave
+*.backup
+*.old
+*.orig
