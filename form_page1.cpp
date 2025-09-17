@@ -326,7 +326,7 @@ void Form_page1::drawpdf(QString tempFileName)
     painter.drawText(QRectF(tableLeft, currentY, col1Width, lineHeight), Qt::AlignCenter, "检验水平");
     painter.drawText(QRectF(tableLeft + col1Width, currentY, tableWidth - col1Width, lineHeight), Qt::AlignCenter, content.testLevel);
 
-    // 绘制检验项目部分 - 无标题行，第一列合并为一个单元格
+    // 绘制检验项目部分
     currentY += lineHeight;
     painter.drawLine(tableLeft, currentY, tableLeft + tableWidth, currentY);
     painter.drawLine(tableLeft + col1Width, currentY, tableLeft + col1Width, currentY + lineHeight * 9); // 第一列垂直分隔线
@@ -339,10 +339,11 @@ void Form_page1::drawpdf(QString tempFileName)
     // 先绘制第一列的合并单元格文本
     painter.drawText(QRectF(tableLeft, currentY, col1Width, lineHeight * 9), Qt::AlignCenter | Qt::TextWordWrap, "检验项目");
     
-    // 循环绘制9行内容（除第一列外）
+    // 循环绘制9行内容（只删除检验项目列的横线，保留其他三列的横线）
     for (int i = 0; i < 9; i++) {
         currentY += lineHeight;
-        painter.drawLine(tableLeft, currentY, tableLeft + tableWidth, currentY); // 行分隔线
+        // 绘制其他三列的行分隔线（不包括检验项目列）
+        painter.drawLine(tableLeft + col1Width, currentY, tableLeft + tableWidth, currentY);
         
         // 为其他列绘制垂直分隔线
         painter.drawLine(tableLeft + col1Width, currentY - lineHeight, tableLeft + col1Width, currentY);
