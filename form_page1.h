@@ -22,6 +22,8 @@ public:
 protected:
     // 重写resizeEvent来捕获窗口大小变化
     void resizeEvent(QResizeEvent *event) override;
+    // 重写showEvent来捕获窗口显示事件
+    void showEvent(QShowEvent *event) override;
 
 private slots:
     void on_pushButton_clicked();
@@ -31,6 +33,8 @@ private:
     bool eventFilter(QObject *watched, QEvent *event) override;
     double scaleFactor; // 用于跟踪当前缩放比例
     void drawpdf(QString tempFileName);
+    // 统一的图片尺寸调整方法
+    void adjustImageSize();
 };
 
 #endif // FORM_PAGE1_H

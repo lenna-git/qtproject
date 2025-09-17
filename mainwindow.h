@@ -17,6 +17,13 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+private slots:
+    // 按钮1的点击事件槽函数
+    void on_pushButton_clicked();
+    
+    // 按钮2的点击事件槽函数
+    void on_pushButton_2_clicked();
+
 private:
     Ui::MainWindow *ui;
     Form_page1 *formpage1;

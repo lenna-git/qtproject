@@ -1,5 +1,6 @@
 #include "form_page1.h"
 #include "ui_form_page1.h"
+#include "pdfgenerator.h"
 #include<QVBoxLayout>
 #include<QPushButton>
 #include<QTextEdit>
@@ -31,7 +32,7 @@ Form_page1::Form_page1(QWidget *parent) :
 {
     ui->setupUi(this);
     // 设置初始页面大小
-    this->resize(800, 600);
+//    this->resize(800, 600);
     QVBoxLayout *AllLayout = new QVBoxLayout(this);
 //       this->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
       // 创建图形场景
@@ -48,33 +49,105 @@ Form_page1::Form_page1(QWidget *parent) :
       view->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
       // 加载图片并添加到场景
-      QPixmap pixmap("D:/code/1.jpg");
-      if (!pixmap.isNull()) {
-          QGraphicsPixmapItem *pixmapItem = scene->addPixmap(pixmap);
-          pixmapItem->setTransformationMode(Qt::SmoothTransformation);
-          // 设置场景大小为图片大小
-          scene->setSceneRect(pixmap.rect());
-          // 调整视图以适应场景（显示完整图片）
-          view->fitInView(scene->sceneRect(), Qt::KeepAspectRatio);
-      }else {
-          // 添加错误处理，方便调试
-          qDebug() << "Failed to load image: D:\\code\\1.jpg";
-      }
+    QPixmap pixmap("D:/code/1.jpg");
+    if (!pixmap.isNull()) {
+        QGraphicsPixmapItem *pixmapItem = scene->addPixmap(pixmap);
+        pixmapItem->setTransformationMode(Qt::SmoothTransformation);
+        // 设置场景大小为图片大小
+        scene->setSceneRect(pixmap.rect());
+    }else {
+        // 添加错误处理，方便调试
+        qDebug() << "Failed to load image: D:\\code\\1.jpg";
+    }
 
-      // 重写视图的 resizeEvent 以实现自动缩放
-      // 这里使用事件过滤器实现
-      view->installEventFilter(this);
+    // 重写视图的 resizeEvent 以实现自动缩放
+    // 这里使用事件过滤器实现
+    view->installEventFilter(this);
+
+    // 添加调试信息，跟踪视图和场景初始化过程
+    qDebug() << "Form_page1 constructor: Initial widget size" << this->size();
+    qDebug() << "Form_page1 constructor: Initial viewport size" << view->viewport()->rect().size();
+    
+    // 使用多级延迟回调策略，确保在不同初始化阶段都能正确缩放
+    // 第一级：快速初始缩放（200ms）
+    QTimer::singleShot(200, this, [this]() {
+        this->adjustImageSize();
+        qDebug() << "First delayed scaling completed"; 
+    });
+    
+    // 第二级：确保窗口完全显示后的缩放（500ms）
+    QTimer::singleShot(500, this, [this]() {
+        this->adjustImageSize();
+        qDebug() << "Second delayed scaling completed"; 
+    });
+    
+    // 第三级：最终调整（1000ms）
+    QTimer::singleShot(1000, this, [this]() {
+        this->adjustImageSize();
+        qDebug() << "Final delayed scaling completed"; 
+    });
 
 
       // 添加到布局，设置伸展因子为1
     AllLayout->addWidget(view, 1);
     AllLayout->addWidget(ui->pushButton);
+    
+    // showEvent方法在类中重写实现
 
 }
 
 Form_page1::~Form_page1()
 {
     delete ui;
+}
+
+// 统一的图片尺寸调整方法，在多个时机被调用以确保图片正确缩放
+void Form_page1::adjustImageSize() {
+    if (view && scene && !scene->sceneRect().isEmpty()) {
+        // 强制布局更新，确保视口大小准确
+        this->updateGeometry();
+        view->updateGeometry();
+        view->viewport()->updateGeometry();
+        
+        // 强制重绘以确保视口正确更新
+        this->repaint();
+        view->repaint();
+        view->viewport()->repaint();
+        
+        // 获取视口大小和场景大小
+        QRectF viewportRect = view->viewport()->rect();
+        QRectF sceneRect = scene->sceneRect();
+        
+        // 输出调试信息
+        qDebug() << "Adjusting image size - Viewport:" << viewportRect.size() << "Scene:" << sceneRect.size();
+        
+        // 添加安全检查，确保视口和场景大小有效
+        if (viewportRect.width() > 50 && viewportRect.height() > 50 && sceneRect.width() > 0 && sceneRect.height() > 0) {
+            // 计算缩放因子，确保图片完全显示在视口内
+            // 增加更大的边距（70%），防止图片显示过大
+            qreal scaleX = (viewportRect.width() * 0.7) / sceneRect.width();
+            qreal scaleY = (viewportRect.height() * 0.7) / sceneRect.height();
+            qreal scale = qMin(scaleX, scaleY);
+            
+            // 添加最大和最小缩放限制
+            const qreal minScale = 0.1;
+            const qreal maxScale = 1.0;
+            scale = qMax(scale, minScale);
+            scale = qMin(scale, maxScale);
+            
+            qDebug() << "Calculated scale factor:" << scale;
+            
+            // 重置变换并应用计算的缩放因子
+            view->resetTransform();
+            view->scale(scale, scale);
+            
+            // 确保图片居中显示
+            view->centerOn(sceneRect.center());
+            
+            // 再次强制重绘以应用更改
+            view->repaint();
+        }
+    }
 }
 
 // 重写窗口的resizeEvent方法
@@ -84,38 +157,26 @@ void Form_page1::resizeEvent(QResizeEvent *event)
     QWidget::resizeEvent(event);
 //    this->resizeEvent(event);
 
-    // 确保在窗口大小变化（包括最大化/还原）时，图片能够自适应缩放
-    if (view && scene && !scene->sceneRect().isEmpty()) {
-        // 保存当前视图的中心位置
-        QPointF center = view->mapToScene(view->viewport()->rect().center());
+    // 调用统一的图片尺寸调整方法
+    this->adjustImageSize();
+}
 
-        // 先重置视图，然后应用缩放因子
-        view->resetTransform();
-        view->fitInView(scene->sceneRect(), Qt::KeepAspectRatio);
-        view->scale(scaleFactor, scaleFactor);
-
-        // 恢复中心位置
-        view->centerOn(center);
-    }
+// 重写窗口的showEvent方法
+void Form_page1::showEvent(QShowEvent *event)
+{
+    // 调用父类的showEvent以确保正常功能
+    QWidget::showEvent(event);
+    
+    // 延迟调用图片尺寸调整方法，确保窗口已经完全显示
+    QTimer::singleShot(100, this, &Form_page1::adjustImageSize);
 }
 
 bool Form_page1::eventFilter(QObject *watched, QEvent *event)
 {
     // 只处理view的resize事件
     if (watched == view && event->type() == QEvent::Resize) {
-        // 添加安全检查
-        if (scene && !scene->sceneRect().isEmpty()) {
-            // 保存当前视图的中心位置
-            QPointF center = view->mapToScene(view->viewport()->rect().center());
-
-            // 重置变换并应用缩放因子
-            view->resetTransform();
-            view->fitInView(scene->sceneRect(), Qt::KeepAspectRatio);
-            view->scale(scaleFactor, scaleFactor);
-
-            // 恢复中心位置
-            view->centerOn(center);
-        }
+        // 调用统一的图片尺寸调整方法
+        this->adjustImageSize();
     }
     return QWidget::eventFilter(watched, event);
 }
@@ -407,129 +468,7 @@ void Form_page1::drawpdf(QString tempFileName)
 void Form_page1::on_pushButton_clicked()
 {
     qDebug()<<"开始生成pdf";
-
-
-    // 创建临时文件，用于存储PDF内容
-   // 直接使用QFile创建临时文件，避免QTemporaryFile自动删除的问题
-    QString tempFileName = QDir::temp().absoluteFilePath(QString("qt_temp_%1.pdf").arg(QDateTime::currentDateTime().toString("yyyyMMddhhmmsszzz")));
-
-    // 测试是否可以创建文件
-    QFile testFile(tempFileName);
-    if (!testFile.open(QIODevice::WriteOnly)) {
-       qWarning("无法创建临时文件");
-       QMessageBox::critical(this, "错误", "无法创建临时PDF文件");
-       return;
-    }
-    testFile.close();
-
-    qDebug() << "PDF临时文件路径：" << tempFileName;
-    qDebug() << "临时文件是否存在：" << QFile::exists(tempFileName);
-    qDebug() << "临时文件所在目录是否存在：" << QFileInfo(tempFileName).absoluteDir().exists();
-
-    //绘制pdf
-    drawpdf(tempFileName);
-
-
-    qApp->processEvents(); // 处理所有待处理的事件
-
-    qDebug() << "PDF内容已生成，准备打开预览";
-
-    // 打开文件进行预览前，添加一个小延迟，确保文件完全写入和释放
-    QThread::msleep(300); // 延迟300毫秒
-    qApp->processEvents(); // 再次处理事件
-
-    // 检查文件是否存在且可读，而不是直接打开
-    qDebug() << "准备打开预览前 - 临时文件路径：" << tempFileName;
-    qDebug() << "准备打开预览前 - 临时文件是否存在：" << QFile::exists(tempFileName);
-
-    QFileInfo fileInfo(tempFileName);
-    if (fileInfo.exists() && fileInfo.isReadable()) {
-
-       // 自动打开PDF文件进行预览
-       QUrl url = QUrl::fromLocalFile(tempFileName);
-       if (!QDesktopServices::openUrl(url)) {
-           qWarning("无法打开PDF文件进行预览");
-           QMessageBox::warning(this, "警告", "无法打开PDF预览，请手动查看临时文件：\n" + tempFileName);
-       }
-    } else {
-       qWarning("文件仍然被锁定，无法打开预览");
-       QMessageBox::warning(this, "警告", "PDF文件被锁定，无法打开预览。请稍后重试。");
-    }
-
-       // 使用QTimer延迟询问用户是否保存，给预览程序足够的时间打开文件
-    QTimer::singleShot(1000, this, [=]() {
-       // 显示对话框，询问用户是否保存PDF
-       QMessageBox::StandardButton reply;
-       reply = QMessageBox::question(nullptr, "保存PDF", "是否保存此PDF文件？",
-                                    QMessageBox::Save | QMessageBox::Discard);
-
-       if (reply == QMessageBox::Save) {
-           // 用户选择保存，打开文件保存对话框
-           QString saveFileName = QFileDialog::getSaveFileName(
-                 nullptr, "保存PDF文件", "document.pdf", "PDF文件 (*.pdf)");
-
-           if (!saveFileName.isEmpty()) {
-               // 尝试多次复制文件，增加重试次数和延迟以处理文件锁定
-               bool copied = false;
-               int retryCount = 0;
-               const int maxRetries = 5; // 增加重试次数
-
-               while (!copied && retryCount < maxRetries) {
-                   int delayMs = 500 + (retryCount * 300); // 递增的延迟时间
-                   QThread::msleep(delayMs); // 每次重试前的延迟递增
-                   qApp->processEvents(); // 处理事件，确保文件系统操作正常
-
-                   qDebug() << "尝试复制文件（" << retryCount + 1 << "/" << maxRetries << ")，延迟：" << delayMs << "ms";
-                   qDebug() << "源文件：" << tempFileName;
-                   qDebug() << "目标文件：" << saveFileName;
-                   qDebug() << "源文件是否存在：" << QFile::exists(tempFileName);
-                   qDebug() << "目标文件是否存在：" << QFile::exists(saveFileName);
-
-                   // 如果目标文件存在，先尝试删除它
-                   if (QFile::exists(saveFileName)) {
-                       qDebug() << "目标文件已存在，尝试删除";
-                       if (!QFile::remove(saveFileName)) {
-                           qWarning() << "无法删除现有文件，可能被其他程序占用";
-                           retryCount++;
-                           continue;
-                       }
-                   }
-
-                   if (QFile::copy(tempFileName, saveFileName)) {
-                       copied = true;
-                       qDebug() << "PDF文件已保存到：" << saveFileName;
-                       QMessageBox::information(nullptr, "成功", "PDF文件已保存\n" + saveFileName);
-                   } else {
-                       retryCount++;
-                       qWarning() << "无法保存PDF文件到指定位置，正在重试（" << retryCount << "/" << maxRetries << ")";
-                   }
-               }
-
-               if (!copied) {
-                   qWarning("多次尝试后仍然无法保存PDF文件");
-                   // 提供一个替代方案
-                   QString message = QString("无法保存PDF文件。可能文件正被其他程序占用。\n\n")
-                                   + "临时文件位置：" + tempFileName + "\n\n"
-                                   + "请手动打开此文件夹并复制该文件。\n\n"
-                                   + "是否现在打开临时文件夹？";
-
-                   if (QMessageBox::Yes == QMessageBox::question(nullptr, "保存失败", message, QMessageBox::Yes | QMessageBox::No)) {
-                       QDesktopServices::openUrl(QUrl::fromLocalFile(QFileInfo(tempFileName).absolutePath()));
-                   }
-               }
-           }
-       }
-
-       // 尝试删除临时文件，但不强制
-       QTimer::singleShot(2000, [=]() {
-           if (QFile::exists(tempFileName)) {
-               if (QFile::remove(tempFileName)) {
-                   qDebug() << "已删除临时PDF文件";
-               } else {
-                   qDebug() << "无法删除临时PDF文件，可能被其他程序占用";
-                   // 不显示错误消息，因为这是正常现象
-               }
-           }
-       });
-    });
+    
+    // 调用PDFGenerator的统一方法来处理临时文件、预览和保存逻辑
+    PDFGenerator::generateAndManageReportPDF(this);
 }

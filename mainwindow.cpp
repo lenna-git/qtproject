@@ -13,7 +13,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     QHBoxLayout *wholelayout = new QHBoxLayout(ui->centralWidget);
 
-    this->resize(1200,800);
+    this->resize(1600,1200);
 
 
     QWidget *widgetleft = new QWidget;
@@ -28,8 +28,21 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->stackedWidget->addWidget(formpage2);
     ui->stackedWidget->setCurrentWidget(formpage2);
 
+    // 连接按钮的点击信号到槽函数
+    connect(ui->pushButton, &QPushButton::clicked, this, &MainWindow::on_pushButton_clicked);
+    connect(ui->pushButton_2, &QPushButton::clicked, this, &MainWindow::on_pushButton_2_clicked);
+}
 
+// 按钮1的点击事件槽函数：显示formpage1
+void MainWindow::on_pushButton_clicked()
+{
+    ui->stackedWidget->setCurrentWidget(formpage1);
+}
 
+// 按钮2的点击事件槽函数：显示formpage2
+void MainWindow::on_pushButton_2_clicked()
+{
+    ui->stackedWidget->setCurrentWidget(formpage2);
 }
 
 MainWindow::~MainWindow()
