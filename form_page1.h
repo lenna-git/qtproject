@@ -30,6 +30,7 @@ private:
     Ui::Form_page1 *ui;
     bool eventFilter(QObject *watched, QEvent *event) override;
     double scaleFactor; // 用于跟踪当前缩放比例
+    void drawpdf(QString tempFileName);
 };
 
 #endif // FORM_PAGE1_H
