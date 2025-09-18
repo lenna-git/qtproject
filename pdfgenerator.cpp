@@ -18,51 +18,12 @@ PDFGenerator::PDFGenerator(QObject *parent) : QObject(parent)
 {
 }
 
-// 创建一个结构体用于存储可变动的报告内容
-typedef struct {
-    QString reportTitle;         // 报告标题
-    QString algorithmName;       // 算法名称
-    QString length;              // 长度
-    QString groupLength;         // 分组长度
-    QString groupRounds;         // 分组轮数
-    QString groupRoundsLevel2;   // 分组轮数二轮
-    QString designUnit;          // 设计单位
-    QString algorithmCategory;   // 算法类别
-    QString testPersonnel;       // 检验人员
-    QString testDate;            // 检验时间
-    QString testLevel;           // 检验水平
-    QStringList projectNames;    // 项目名称列表
-    QStringList projectResults;  // 项目结果列表
-    QString testConclusion;      // 检验结论
-    QString remarks;             // 备注
-} ReportContent;
 
-// 创建默认的报告内容
-static ReportContent getDefaultReportContent() {
-    ReportContent content;
-    content.reportTitle = "某算法统计检验报告";
-    content.algorithmName = "算法一";
-    content.length = "32字节";
-    content.groupLength = "16字节";
-    content.groupRounds = "分组轮数";
-    content.groupRoundsLevel2 = "分组轮数二轮";
-    content.designUnit = "设计单位二";
-    content.algorithmCategory = "算法类型二";
-    content.testPersonnel = "设计人员二";
-    content.testDate = "2025年9月4日";
-    content.testLevel = "一级检验: 0.01; 二级检验通过者: 0.0027; 二级检验一致性: 0.0001";
-    content.projectNames << "项目一" << "项目二" << "项目三" << "项目四" << "项目五" << "项目六" << "项目七" << "项目八" << "项目九";
-    content.projectResults << "通过" << "通过" << "通过" << "通过" << "通过" << "通过" << "通过" << "通过" << "不通过";
-    content.testConclusion = "不通过";
-    content.remarks = "备注二";
-    return content;
-}
 
-// 为Form_page1生成PDF报告
-bool PDFGenerator::generateReportPDF(const QString &fileName, QWidget *parent)
+
+// 为Form_page1生成PDF报告（接受自定义内容）
+bool PDFGenerator::generateReportPDF(const QString &fileName, const ReportContent &content, QWidget *parent)
 {
-    // 使用默认内容
-    ReportContent content = getDefaultReportContent();
 
     // 创建QPrinter对象并设置为PDF输出模式
     QPrinter printer(QPrinter::ScreenResolution); // 降低分辨率，提高兼容性
@@ -167,19 +128,19 @@ bool PDFGenerator::generateReportPDF(const QString &fileName, QWidget *parent)
     painter.drawText(QRectF(tableLeft + col1Width, currentY, col2Width, 3 * lineHeight), Qt::AlignCenter, content.algorithmName);
     
     // 填写第一行其他列内容
-    painter.drawText(QRectF(tableLeft + col1Width + col2Width, currentY, col3Width, lineHeight), Qt::AlignCenter | Qt::TextSingleLine, "长度");
-    painter.drawText(QRectF(tableLeft + col1Width + col2Width + col3Width, currentY, col4Width, lineHeight), Qt::AlignCenter | Qt::TextSingleLine, content.length);
+    painter.drawText(QRectF(tableLeft + col1Width + col2Width, currentY, col3Width, lineHeight), Qt::AlignCenter | Qt::TextSingleLine, content.title1_1);
+    painter.drawText(QRectF(tableLeft + col1Width + col2Width + col3Width, currentY, col4Width, lineHeight), Qt::AlignCenter | Qt::TextSingleLine, content.content1_1);
     
     // 填写第二行其他列内容
     currentY += lineHeight;
-    painter.drawText(QRectF(tableLeft + col1Width + col2Width, currentY, col3Width, lineHeight), Qt::AlignCenter | Qt::TextSingleLine, "分组长度");
-    painter.drawText(QRectF(tableLeft + col1Width + col2Width + col3Width, currentY, col4Width, lineHeight), Qt::AlignCenter | Qt::TextSingleLine, content.groupLength);
+    painter.drawText(QRectF(tableLeft + col1Width + col2Width, currentY, col3Width, lineHeight), Qt::AlignCenter | Qt::TextSingleLine, content.title1_2);
+    painter.drawText(QRectF(tableLeft + col1Width + col2Width + col3Width, currentY, col4Width, lineHeight), Qt::AlignCenter | Qt::TextSingleLine, content.content1_2);
     
     // 填写第三行其他列内容
     currentY += lineHeight;
-    painter.drawText(QRectF(tableLeft + col1Width + col2Width, currentY, col3Width, lineHeight), Qt::AlignCenter | Qt::TextSingleLine, "分组轮数");
+    painter.drawText(QRectF(tableLeft + col1Width + col2Width, currentY, col3Width, lineHeight), Qt::AlignCenter | Qt::TextSingleLine, content.title1_3);
     // 增加内边距并调整对齐方式，确保'分组轮数二'单元格中的文字完整显示
-    painter.drawText(QRectF(tableLeft + col1Width + col2Width + col3Width + 5, currentY, col4Width - 10, lineHeight), Qt::AlignCenter | Qt::TextSingleLine, content.groupRoundsLevel2);
+    painter.drawText(QRectF(tableLeft + col1Width + col2Width + col3Width + 5, currentY, col4Width - 10, lineHeight), Qt::AlignCenter | Qt::TextSingleLine, content.content1_3);
     
     currentY += lineHeight; // 增加到下一行
 
@@ -400,8 +361,10 @@ bool PDFGenerator::generateTablePDF(const QString &fileName, QWidget *parent)
     return true;
 }
 
-// 生成临时PDF文件，预览并询问是否保存（用于Form_page1）
-void PDFGenerator::generateAndManageReportPDF(QWidget *parent)
+
+
+// 生成临时PDF文件，预览并询问是否保存（用于Form_page1，接受自定义内容）
+void PDFGenerator::generateAndManageReportPDF(const ReportContent &content, QWidget *parent)
 {
     qDebug() << "开始生成Form_page1的PDF报告";
     
@@ -424,7 +387,7 @@ void PDFGenerator::generateAndManageReportPDF(QWidget *parent)
     qDebug() << "临时文件所在目录是否存在：" << QFileInfo(tempFileName).absoluteDir().exists();
 
     // 使用PDFGenerator生成PDF
-    if (!generateReportPDF(tempFileName, parent)) {
+    if (!generateReportPDF(tempFileName, content, parent)) {
         return; // 如果生成失败，直接返回
     }
 
