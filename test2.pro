@@ -31,15 +31,18 @@ SOURCES += \
         mainwindow.cpp \
     form_page1.cpp \
     form_page2.cpp \
-    pdfgenerator.cpp
+    pdfgenerator.cpp \
+    form_page3.cpp
 
 HEADERS += \
         mainwindow.h \
     form_page1.h \
     form_page2.h \
-    pdfgenerator.h
+    pdfgenerator.h \
+    form_page3.h
 
 FORMS += \
         mainwindow.ui \
     form_page1.ui \
-    form_page2.ui
+    form_page2.ui \
+    form_page3.ui

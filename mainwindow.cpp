@@ -8,7 +8,8 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
     formpage1(new Form_page1),
-    formpage2(new Form_page2)
+    formpage2(new Form_page2),
+    formpage3(new Form_page3)
 {
     ui->setupUi(this);
     QHBoxLayout *wholelayout = new QHBoxLayout(ui->centralWidget);
@@ -20,13 +21,15 @@ MainWindow::MainWindow(QWidget *parent) :
     QVBoxLayout *leftlayout  = new QVBoxLayout(widgetleft);
     leftlayout->addWidget(ui->pushButton);
     leftlayout->addWidget(ui->pushButton_2);
+    leftlayout->addWidget(ui->pushButton_3);
 
     wholelayout->addWidget(widgetleft);
     wholelayout->addWidget(ui->stackedWidget);
 
     ui->stackedWidget->addWidget(formpage1);
     ui->stackedWidget->addWidget(formpage2);
-    ui->stackedWidget->setCurrentWidget(formpage2);
+    ui->stackedWidget->addWidget(formpage3);
+    ui->stackedWidget->setCurrentWidget(formpage1);
 
     // 连接按钮的点击信号到槽函数
     connect(ui->pushButton, &QPushButton::clicked, this, &MainWindow::on_pushButton_clicked);
@@ -48,4 +51,9 @@ void MainWindow::on_pushButton_2_clicked()
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::on_pushButton_3_clicked()
+{
+    ui->stackedWidget->setCurrentWidget(formpage3);
 }
