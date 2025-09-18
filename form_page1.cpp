@@ -91,6 +91,7 @@ Form_page1::Form_page1(QWidget *parent) :
       // 添加到布局，设置伸展因子为1
     AllLayout->addWidget(view, 1);
     AllLayout->addWidget(ui->pushButton);
+    AllLayout->addWidget(ui->pushButton_2);
     
     // showEvent方法在类中重写实现
 
@@ -195,9 +196,6 @@ void Form_page1::on_pushButton_clicked()
     content.content1_2 = "内容2";
     content.title1_3 = "标题一3";
     content.content1_3 = "内容3";
-//    content.groupLength = ui->lineEditGroupLength->text();
-//    content.groupRounds = "分组轮数";
-//    content.groupRoundsLevel2 = "分组轮数二轮";
     content.designUnit = "设计单位二";
     content.algorithmCategory = "算法类型二";
     content.testPersonnel = "设计人员二";
@@ -210,4 +208,30 @@ void Form_page1::on_pushButton_clicked()
     
     // 调用PDFGenerator的方法，传入自定义的ReportContent
     PDFGenerator::generateAndManageReportPDF(content, this);
+}
+
+void Form_page1::on_pushButton_2_clicked()
+{
+    // 初始化ReportContent结构体
+    ReportContent content;
+    content.reportTitle = "某算法统计检验报告XXXXXXXX";
+    content.algorithmName = "算法一";
+    content.title1_1 = "标题一";
+    content.content1_1 = "内容一";
+    content.title1_2 = "标题2";
+    content.content1_2 = "内容2";
+    content.title1_3 = "标题一3";
+    content.content1_3 = "内容3";
+    content.designUnit = "设计单位二";
+    content.algorithmCategory = "算法类型二";
+    content.testPersonnel = "设计人员二";
+    content.testDate = "2025年9月4日";
+    content.testLevel = "一级检验: 0.01; 二级检验通过者: 0.0027; 二级检验一致性: 0.0001";
+    content.projectNames << "项目一" << "项目二" << "项目三" << "项目四" << "项目五" << "项目六"  ;
+    content.projectResults << "通过" << "通过" << "通过" << "通过" << "通过" << "通过"  ;
+    content.testConclusion = "不通过";
+    content.remarks = "备注二";
+
+    // 调用PDFGenerator的方法，传入自定义的ReportContent
+    PDFGenerator::generateAndManageReportPDFWith6Projects(content, this);
 }

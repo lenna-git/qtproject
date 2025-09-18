@@ -38,6 +38,9 @@ public:
 // 为Form_page1生成PDF报告（接受自定义内容）
 static bool generateReportPDF(const QString &fileName, const ReportContent &content, QWidget *parent = nullptr);
 
+// 生成只有6个检验项目的PDF报告
+static bool generateReportPDFWith6Projects(const QString &fileName, const ReportContent &content, QWidget *parent = nullptr);
+
 // 为Form_page2生成表格PDF
 static bool generateTablePDF(const QString &fileName, QWidget *parent = nullptr);
 
@@ -45,6 +48,9 @@ static bool generateTablePDF(const QString &fileName, QWidget *parent = nullptr)
 
 // 生成临时PDF文件，预览并询问是否保存（用于Form_page1，接受自定义内容）
 static void generateAndManageReportPDF(const ReportContent &content, QWidget *parent = nullptr);
+
+    // 生成临时PDF文件，预览并询问是否保存（用于Form_page1，只有6个检验项目）
+static void generateAndManageReportPDFWith6Projects(const ReportContent &content, QWidget *parent = nullptr);
     
     // 生成临时PDF文件，预览并询问是否保存（用于Form_page2）
 static void generateAndManageTablePDF(QWidget *parent = nullptr);
