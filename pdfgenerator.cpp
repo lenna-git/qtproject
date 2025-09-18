@@ -63,13 +63,13 @@ bool PDFGenerator::generateReportPDFWith6Projects(const QString &fileName, const
     painter.setFont(font);
 
     // 计算内容区域
-    qreal margin = 15; // 减小边距，增加标题和表格的可用宽度
+    qreal margin = 10; // 进一步减小边距，最大化表格可用宽度
     qreal tableLeft = margin;
-    qreal tableTop = 80; // 增加表格顶部位置，为标题提供更多空间
+    qreal tableTop = 50; // 降低表格顶部位置，为表格提供更多垂直空间
     qreal tableWidth = pageWidth - 2 * margin;
-    qreal tableHeight = pageHeight - 140; // 相应调整表格高度
-    qreal totalRows = 19; // 估算的总行数
-    qreal lineHeight = tableHeight / totalRows; // 使用新的表格高度计算行高，确保与修改的尺寸一致
+    qreal tableHeight = pageHeight - 100; // 增加表格高度，使其占满整个页面
+    qreal totalRows = 16; // 对于6个检验项目版本的准确行数
+    qreal lineHeight = tableHeight / totalRows; // 重新计算行高，确保表格占满页面
     qreal col1Width = 150; // 增加第一列宽度，使其能够显示4个中文字符
     qreal col2Width = 170; // 调整第二列宽度，保持表格整体平衡
     qreal col3Width = 130; // 增加第三列宽度，使其能够显示"分组轮数"4个中文字符
