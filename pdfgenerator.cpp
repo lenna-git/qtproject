@@ -102,17 +102,17 @@ bool PDFGenerator::generateReportPDF(const QString &fileName, QWidget *parent)
     painter.setFont(font);
 
     // 计算内容区域
-    qreal margin = 30;
+    qreal margin = 15; // 减小边距，增加标题和表格的可用宽度
     qreal tableLeft = margin;
-    qreal tableTop = 60;
+    qreal tableTop = 80; // 增加表格顶部位置，为标题提供更多空间
     qreal tableWidth = pageWidth - 2 * margin;
-    qreal tableHeight = pageHeight - 120;
+    qreal tableHeight = pageHeight - 140; // 相应调整表格高度
     qreal totalRows = 19; // 估算的总行数
-    qreal lineHeight = (pageHeight - 120) / totalRows;
-    qreal col1Width = 100;
-    qreal col2Width = 160;
-    qreal col3Width = 100;
-    qreal col4Width = 100;
+    qreal lineHeight = tableHeight / totalRows; // 使用新的表格高度计算行高，确保与修改的尺寸一致
+    qreal col1Width = 150; // 增加第一列宽度，使其能够显示4个中文字符
+    qreal col2Width = 170; // 调整第二列宽度，保持表格整体平衡
+    qreal col3Width = 130; // 增加第三列宽度，使其能够显示"分组轮数"4个中文字符
+    qreal col4Width = 130; // 增加第四列宽度，确保"分组轮数二"单元格中的"分"字能够完整显示
 
     // 先填充表格背景色
     painter.fillRect(tableLeft, tableTop, tableWidth, tableHeight, Qt::white);
@@ -121,7 +121,7 @@ bool PDFGenerator::generateReportPDF(const QString &fileName, QWidget *parent)
     font.setPointSize(16);
     font.setBold(true);
     painter.setFont(font);
-    painter.drawText(QRectF(tableLeft, tableTop - 40, tableWidth, 30), Qt::AlignCenter, content.reportTitle);
+    painter.drawText(QRectF(tableLeft, tableTop - 50, tableWidth, 50), Qt::AlignCenter, content.reportTitle); // 增加标题高度从30到50，解决标题文字显示不全问题
     font.setPointSize(12);
     font.setBold(false);
     painter.setFont(font);
@@ -178,7 +178,8 @@ bool PDFGenerator::generateReportPDF(const QString &fileName, QWidget *parent)
     // 填写第三行其他列内容
     currentY += lineHeight;
     painter.drawText(QRectF(tableLeft + col1Width + col2Width, currentY, col3Width, lineHeight), Qt::AlignCenter | Qt::TextSingleLine, "分组轮数");
-    painter.drawText(QRectF(tableLeft + col1Width + col2Width + col3Width, currentY, col4Width, lineHeight), Qt::AlignCenter | Qt::TextSingleLine, content.groupRoundsLevel2);
+    // 增加内边距并调整对齐方式，确保'分组轮数二'单元格中的文字完整显示
+    painter.drawText(QRectF(tableLeft + col1Width + col2Width + col3Width + 5, currentY, col4Width - 10, lineHeight), Qt::AlignCenter | Qt::TextSingleLine, content.groupRoundsLevel2);
     
     currentY += lineHeight; // 增加到下一行
 
@@ -222,14 +223,14 @@ bool PDFGenerator::generateReportPDF(const QString &fileName, QWidget *parent)
     // 绘制检验项目部分
     currentY += lineHeight;
     painter.drawLine(tableLeft, currentY, tableLeft + tableWidth, currentY);
-    painter.drawLine(tableLeft + col1Width, currentY, tableLeft + col1Width, currentY + lineHeight * 9); // 第一列垂直分隔线
-    painter.drawLine(tableLeft + col1Width * 2, currentY, tableLeft + col1Width * 2, currentY + lineHeight * 9); // 第二列垂直分隔线
-    painter.drawLine(tableLeft + col1Width * 3, currentY, tableLeft + col1Width * 3, currentY + lineHeight * 9); // 第三列垂直分隔线
+    painter.drawLine(tableLeft + col1Width, currentY, tableLeft + col1Width, currentY + lineHeight * 9); // 第一列垂直分隔线（已增加到150宽度）
+    painter.drawLine(tableLeft + col1Width + 80, currentY, tableLeft + col1Width + 80, currentY + lineHeight * 9); // 序号列垂直分隔线（固定宽度80）
+    painter.drawLine(tableLeft + col1Width + 80 + 150, currentY, tableLeft + col1Width + 80 + 150, currentY + lineHeight * 9); // 项目名称列垂直分隔线（调整宽度到150）
 
-    // 填写检验项目内容 - 4列布局，第一列合并为一个单元格
+    // 填写检验项目内容
     int projectCount = qMin(content.projectNames.size(), content.projectResults.size());
     
-    // 先绘制第一列的合并单元格文本
+    // 先绘制第一列的合并单元格文本 - 现在可以显示4个中文字符
     painter.drawText(QRectF(tableLeft, currentY, col1Width, lineHeight * 9), Qt::AlignCenter | Qt::TextWordWrap, "检验项目");
     
     // 循环绘制9行内容
@@ -240,20 +241,20 @@ bool PDFGenerator::generateReportPDF(const QString &fileName, QWidget *parent)
         
         // 为其他列绘制垂直分隔线
         painter.drawLine(tableLeft + col1Width, currentY - lineHeight, tableLeft + col1Width, currentY);
-        painter.drawLine(tableLeft + col1Width * 2, currentY - lineHeight, tableLeft + col1Width * 2, currentY);
-        painter.drawLine(tableLeft + col1Width * 3, currentY - lineHeight, tableLeft + col1Width * 3, currentY);
+        painter.drawLine(tableLeft + col1Width + 80, currentY - lineHeight, tableLeft + col1Width + 80, currentY);
+        painter.drawLine(tableLeft + col1Width + 80 + 150, currentY - lineHeight, tableLeft + col1Width + 80 + 150, currentY);
         
-        // 第二列：序号列 - 分9行，序号1-9
-        painter.drawText(QRectF(tableLeft + col1Width, currentY - lineHeight, col1Width, lineHeight), Qt::AlignCenter | Qt::TextSingleLine, QString::number(i + 1));
+        // 第二列：序号列 - 分9行，序号1-9（固定宽度80）
+        painter.drawText(QRectF(tableLeft + col1Width, currentY - lineHeight, 80, lineHeight), Qt::AlignCenter | Qt::TextSingleLine, QString::number(i + 1));
         
-        // 第三列：项目名称列
+        // 第三列：项目名称列（调整宽度到150，保持表格整体平衡）
         if (i < projectCount) {
-            painter.drawText(QRectF(tableLeft + col1Width * 2, currentY - lineHeight, col1Width, lineHeight), Qt::AlignCenter | Qt::TextSingleLine, content.projectNames[i]);
+            painter.drawText(QRectF(tableLeft + col1Width + 80, currentY - lineHeight, 150, lineHeight), Qt::AlignCenter | Qt::TextSingleLine, content.projectNames[i]);
         }
         
-        // 第四列：是否通过列
+        // 第四列：是否通过列（剩余宽度）
         if (i < projectCount) {
-            painter.drawText(QRectF(tableLeft + col1Width * 3, currentY - lineHeight, tableWidth - col1Width * 3, lineHeight), Qt::AlignCenter | Qt::TextSingleLine, content.projectResults[i]);
+            painter.drawText(QRectF(tableLeft + col1Width + 80 + 150, currentY - lineHeight, tableWidth - col1Width - 80 - 150, lineHeight), Qt::AlignCenter | Qt::TextSingleLine, content.projectResults[i]);
         }
     }
 
