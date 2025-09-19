@@ -2,6 +2,8 @@
 #define FORM_PAGE3_H
 
 #include <QWidget>
+#include<QStandardItemModel>
+#include"chkresultclass/stream_result_all_data.h"
 
 namespace Ui {
 class Form_page3;
@@ -17,6 +19,11 @@ public:
 
 private:
     Ui::Form_page3 *ui;
+    QStandardItemModel*  mTableViewModel ;
+    QStringList mHeader;
+    QList<stream_result_all_data *> datalist;
+
+    void paintTable_all();
 };
 
 #endif // FORM_PAGE3_H

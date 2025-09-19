@@ -32,14 +32,16 @@ SOURCES += \
     form_page1.cpp \
     form_page2.cpp \
     pdfgenerator.cpp \
-    form_page3.cpp
+    form_page3.cpp \
+    chkresultclass/stream_result_all_data.cpp
 
 HEADERS += \
         mainwindow.h \
     form_page1.h \
     form_page2.h \
     pdfgenerator.h \
-    form_page3.h
+    form_page3.h \
+    chkresultclass/stream_result_all_data.h
 
 FORMS += \
         mainwindow.ui \
