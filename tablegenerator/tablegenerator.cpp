@@ -35,7 +35,7 @@ void TableGenerator::generateTable(QStandardItemModel *model,
         if (header.size() > 0)
         {
             QStandardItem *item0 = new QStandardItem;
-            item0->setData(tmp->m_testitem, Qt::DisplayRole);
+            item0->setData(tmp->testitem(), Qt::DisplayRole);
             model->setItem(i, 0, item0);
         }
         
@@ -43,7 +43,7 @@ void TableGenerator::generateTable(QStandardItemModel *model,
         if (header.size() > 1)
         {
             QStandardItem *item1 = new QStandardItem;
-            item1->setData(tmp->m_testresult, Qt::DisplayRole);
+            item1->setData(tmp->testresult(), Qt::DisplayRole);
             model->setItem(i, 1, item1);
         }
         
@@ -51,7 +51,7 @@ void TableGenerator::generateTable(QStandardItemModel *model,
         if (header.size() > 2)
         {
             QStandardItem *item2 = new QStandardItem;
-            item2->setData(tmp->m_wholeresult, Qt::DisplayRole);
+            item2->setData(tmp->wholeresult(), Qt::DisplayRole);
             model->setItem(i, 2, item2);
         }
     }
@@ -88,7 +88,7 @@ void TableGenerator::generateTable(QStandardItemModel *model,
         if (header.size() > 0)
         {
             QStandardItem *item0 = new QStandardItem;
-            item0->setData(tmp->m_testitem, Qt::DisplayRole);
+            item0->setData(tmp->testitem(), Qt::DisplayRole);
             model->setItem(i, 0, item0);
         }
         
@@ -96,7 +96,7 @@ void TableGenerator::generateTable(QStandardItemModel *model,
         if (header.size() > 1)
         {
             QStandardItem *item1 = new QStandardItem;
-            item1->setData(tmp->m_testresult, Qt::DisplayRole);
+            item1->setData(tmp->testresult(), Qt::DisplayRole);
             model->setItem(i, 1, item1);
         }
         
@@ -104,7 +104,7 @@ void TableGenerator::generateTable(QStandardItemModel *model,
         if (header.size() > 2)
         {
             QStandardItem *item2 = new QStandardItem;
-            item2->setData(tmp->m_wholeresult, Qt::DisplayRole);
+            item2->setData(tmp->wholeresult(), Qt::DisplayRole);
             model->setItem(i, 2, item2);
         }
         
