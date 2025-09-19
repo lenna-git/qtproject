@@ -55,20 +55,8 @@ void Form_page3::paintTable_all()
              << new stream_result_all_data(values8)
              << new stream_result_all_data(values9);
     
-    // 创建额外列数据，用于存储第四列的值
-    QList<QMap<int, QString>> extraColumnsData;
-    for (int i = 0; i < datalist.size(); ++i) {
-        const stream_result_all_data *data = datalist.at(i);
-        QMap<int, QString> rowData;
-        // 如果有第四列数据，则添加到额外列数据中
-        if (data->getAllFields().size() > 3) {
-            rowData[3] = data->getAllFields().at(3);  // 第四列的数据
-        }
-        extraColumnsData.append(rowData);
-    }
-    
-    // 使用TableGenerator生成表格数据 - 使用增强版方法支持多列
-    mTableGenerator->generateTable(mTableViewModel, mHeader, datalist, extraColumnsData);
+    // 使用TableGenerator生成表格数据 - 使用增强版方法动态生成行列
+    mTableGenerator->generateTable(mTableViewModel, mHeader, datalist);
     
     // 使用TableGenerator设置表格视图
     mTableGenerator->setupTableView(ui->tableView, mTableViewModel);

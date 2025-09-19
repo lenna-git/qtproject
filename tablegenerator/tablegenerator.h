@@ -14,16 +14,10 @@ class TableGenerator : public QObject
 public:
     explicit TableGenerator(QObject *parent = nullptr);
     
-    // 生成表格的方法（基础版，支持3列）
+    // 生成表格的方法（动态生成行列）
     void generateTable(QStandardItemModel *model, 
                       const QStringList &header, 
                       const QList<stream_result_all_data *> &dataList);
-                       
-    // 生成表格的方法（增强版，支持多列）
-    void generateTable(QStandardItemModel *model, 
-                      const QStringList &header, 
-                      const QList<stream_result_all_data *> &dataList, 
-                      const QList<QMap<int, QString>> &extraColumnsData);
     
     // 为表格视图设置模型并进行基本配置
     void setupTableView(QTableView *view, QStandardItemModel *model);
