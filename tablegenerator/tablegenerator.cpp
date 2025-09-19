@@ -63,13 +63,15 @@ void TableGenerator::setupTableView(QTableView *view, QStandardItemModel *model)
     // 设置表格模型
     view->setModel(model);
     
-    // 设置列宽自动调整
-
-    view->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-    
     // 设置表格属性
     view->setEditTriggers(QAbstractItemView::NoEditTriggers); // 禁止编辑
     view->setSelectionBehavior(QAbstractItemView::SelectRows); // 选择整行
+    
+    // 隐藏行号列（垂直表头）
+    view->verticalHeader()->setVisible(false);
+    
+    // 设置标题行颜色为淡灰色
+    view->horizontalHeader()->setStyleSheet("QHeaderView::section { background-color: #f0f0f0; }");
 }
 
 // 合并单元格
@@ -91,8 +93,8 @@ void TableGenerator::autoMergeSameCells(QTableView *view, QStandardItemModel *mo
     int rowCount = model->rowCount();
     int columnCount = model->columnCount();
     
-    // 遍历每一列
-    for (int column = 0; column < columnCount; column++)
+    // 遍历每一列（从索引1开始，跳过序号列）
+    for (int column = 1; column < columnCount; column++)
     {
         if (rowCount <= 1) // 如果行数小于等于1，不需要合并
             continue;
