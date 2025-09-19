@@ -26,6 +26,9 @@ private:
     TableGenerator *mTableGenerator;
 
     void paintTable_all();
+
+private slots:
+    void on_pushButton_clicked();
 };
 
 #endif // FORM_PAGE3_H

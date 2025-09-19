@@ -21,7 +21,7 @@ PDFGenerator::PDFGenerator(QObject *parent) : QObject(parent)
 
 
 
-// 生成只有6个检验项目的PDF报告
+// 绘制只有6个检验项目的PDF报告
 bool PDFGenerator::generateReportPDFWith6Projects(const QString &fileName, const ReportContent &content, QWidget *parent)
 {
 
@@ -259,7 +259,7 @@ bool PDFGenerator::generateReportPDFWith6Projects(const QString &fileName, const
     return true;
 }
 
-// 为Form_page1生成PDF报告（接受自定义内容）
+// 为Form_page1绘制DF报告（接受自定义内容）
 bool PDFGenerator::generateReportPDF(const QString &fileName, const ReportContent &content, QWidget *parent)
 {
 
@@ -599,6 +599,66 @@ bool PDFGenerator::generateTablePDF(const QString &fileName, QWidget *parent)
     return true;
 }
 
+// 为Form_page3生成PDF报告
+bool PDFGenerator::generateFormPage3PDF(const QString &fileName, QWidget *parent)
+{
+    // 确保传入的父窗口不为空且是Form_page3类型
+    if (!parent) {
+        qWarning("父窗口为空，无法获取Form_page3的数据");
+        return false;
+    }
+
+    // 创建QPrinter对象并配置为PDF输出
+    QPrinter printer(QPrinter::HighResolution);
+    printer.setOutputFormat(QPrinter::PdfFormat);
+    printer.setOutputFileName(fileName);
+
+    // 设置页面属性
+    printer.setPageSize(QPrinter::A4);  // 设置A4纸张
+    printer.setOrientation(QPrinter::Portrait);  // 纵向
+    printer.setFullPage(false);  // 不全页打印
+
+    // 设置边距
+    printer.setPageMargins(10, 10, 10, 10, QPrinter::Millimeter);
+
+    // 创建QPainter对象用于绘制PDF内容
+    QPainter painter;
+    if (!painter.begin(&printer)) {
+        qWarning("无法创建PDF文件");
+        if (parent) {
+            QMessageBox::critical(parent, "错误", "无法创建PDF文件");
+        }
+        return false;
+    }
+
+    // 设置渲染质量
+    painter.setRenderHint(QPainter::TextAntialiasing, true);
+    painter.setRenderHint(QPainter::Antialiasing, true);
+
+    // 获取页面的可打印区域
+    QRectF printableRect = printer.pageRect(QPrinter::DevicePixel);
+    qreal pageWidth = printableRect.width();
+    qreal pageHeight = printableRect.height();
+
+    // 设置字体
+    QFont font;
+    font.setFamily("SimHei"); // 使用黑体，确保中文正常显示
+    painter.setFont(font);
+
+    // 计算缩放比例，使内容适合PDF页面
+    double xScale = pageWidth / double(parent->width());
+    double yScale = pageHeight / double(parent->height());
+    double scale = qMin(xScale, yScale);
+    painter.scale(scale, scale);
+
+    // 直接绘制整个Form_page3窗口的内容
+    parent->render(&painter);
+
+    // 完成绘制
+    painter.end();
+    return true;
+}
+
 
 
 // 生成临时PDF文件，预览并询问是否保存（用于Form_page1，只有6个检验项目）
@@ -606,135 +666,10 @@ void PDFGenerator::generateAndManageReportPDFWith6Projects(const ReportContent &
 {
     qDebug() << "开始生成Form_page1的PDF报告（6个检验项目版本）"; 
     
-    // 创建临时文件，用于存储PDF内容
-    QString tempFileName = QDir::temp().absoluteFilePath(QString("qt_temp_%1.pdf").arg(QDateTime::currentDateTime().toString("yyyyMMddhhmmsszzz")));
-
-    // 测试是否可以创建文件
-    QFile testFile(tempFileName);
-    if (!testFile.open(QIODevice::WriteOnly)) {
-        qWarning("无法创建临时文件");
-        if (parent) {
-            QMessageBox::critical(parent, "错误", "无法创建临时PDF文件");
-        }
-        return;
-    }
-    testFile.close();
-
-    qDebug() << "PDF临时文件路径：" << tempFileName;
-    qDebug() << "临时文件是否存在：" << QFile::exists(tempFileName);
-    qDebug() << "临时文件所在目录是否存在：" << QFileInfo(tempFileName).absoluteDir().exists();
-
-    // 使用PDFGenerator生成PDF（调用6个检验项目版本的函数）
-    if (!generateReportPDFWith6Projects(tempFileName, content, parent)) {
-        return; // 如果生成失败，直接返回
-    }
-
-    qApp->processEvents(); // 处理所有待处理的事件
-
-    qDebug() << "PDF内容已生成，准备打开预览"; 
-
-    // 打开文件进行预览前，添加一个小延迟，确保文件完全写入和释放
-    QThread::msleep(300); // 延迟300毫秒
-    qApp->processEvents(); // 再次处理事件
-
-    // 检查文件是否存在且可读，而不是直接打开
-    qDebug() << "准备打开预览前 - 临时文件路径：" << tempFileName;
-    qDebug() << "准备打开预览前 - 临时文件是否存在：" << QFile::exists(tempFileName);
-
-    QFileInfo fileInfo(tempFileName);
-    if (fileInfo.exists() && fileInfo.isReadable()) {
-        
-        // 自动打开PDF文件进行预览
-        QUrl url = QUrl::fromLocalFile(tempFileName);
-        if (!QDesktopServices::openUrl(url)) {
-            qWarning("无法打开PDF文件进行预览");
-            if (parent) {
-                QMessageBox::warning(parent, "警告", "无法打开PDF预览，请手动查看临时文件：\n" + tempFileName);
-            }
-        }
-    } else {
-        qWarning("文件仍然被锁定，无法打开预览");
-        if (parent) {
-            QMessageBox::warning(parent, "警告", "PDF文件被锁定，无法打开预览。请稍后重试。");
-        }
-    }
-
-    // 使用QTimer延迟询问用户是否保存，给预览程序足够的时间打开文件
-    QTimer::singleShot(1000, parent, [=]() {
-        // 显示对话框，询问用户是否保存PDF
-        QMessageBox::StandardButton reply;
-        reply = QMessageBox::question(nullptr, "保存PDF", "是否保存此PDF文件？",
-                                     QMessageBox::Save | QMessageBox::Discard);
-
-        if (reply == QMessageBox::Save) {
-            // 用户选择保存，打开文件保存对话框
-            QString saveFileName = QFileDialog::getSaveFileName(
-                  nullptr, "保存PDF文件", "document.pdf", "PDF文件 (*.pdf)");
-
-            if (!saveFileName.isEmpty()) {
-                // 尝试多次复制文件，增加重试次数和延迟以处理文件锁定
-                bool copied = false;
-                int retryCount = 0;
-                const int maxRetries = 5; // 增加重试次数
-
-                while (!copied && retryCount < maxRetries) {
-                    int delayMs = 500 + (retryCount * 300); // 递增的延迟时间
-                    QThread::msleep(delayMs); // 每次重试前的延迟递增
-                    qApp->processEvents(); // 处理事件，确保文件系统操作正常
-
-                    qDebug() << "尝试复制文件（" << retryCount + 1 << "/" << maxRetries << ")，延迟：" << delayMs << "ms";
-                    qDebug() << "源文件：" << tempFileName;
-                    qDebug() << "目标文件：" << saveFileName;
-                    qDebug() << "源文件是否存在：" << QFile::exists(tempFileName);
-                    qDebug() << "目标文件是否存在：" << QFile::exists(saveFileName);
-
-                    // 如果目标文件存在，先尝试删除它
-                    if (QFile::exists(saveFileName)) {
-                        qDebug() << "目标文件已存在，尝试删除";
-                        if (!QFile::remove(saveFileName)) {
-                            qWarning() << "无法删除现有文件，可能被其他程序占用";
-                            retryCount++;
-                            continue;
-                        }
-                    }
-
-                    if (QFile::copy(tempFileName, saveFileName)) {
-                        copied = true;
-                        qDebug() << "PDF文件已保存到：" << saveFileName;
-                        QMessageBox::information(nullptr, "成功", "PDF文件已保存\n" + saveFileName);
-                    } else {
-                        retryCount++;
-                        qWarning() << "无法保存PDF文件到指定位置，正在重试（" << retryCount << "/" << maxRetries << ")";
-                    }
-                }
-
-                if (!copied) {
-                    qWarning("多次尝试后仍然无法保存PDF文件");
-                    // 提供一个替代方案
-                    QString message = QString("无法保存PDF文件。可能文件正被其他程序占用。\n\n")
-                                    + "临时文件位置：" + tempFileName + "\n\n"
-                                    + "请手动打开此文件夹并复制该文件。\n\n"
-                                    + "是否现在打开临时文件夹？";
-
-                    if (QMessageBox::Yes == QMessageBox::question(nullptr, "保存失败", message, QMessageBox::Yes | QMessageBox::No)) {
-                        QDesktopServices::openUrl(QUrl::fromLocalFile(QFileInfo(tempFileName).absolutePath()));
-                    }
-                }
-            }
-        }
-
-        // 尝试删除临时文件，但不强制
-        QTimer::singleShot(2000, [=]() {
-            if (QFile::exists(tempFileName)) {
-                if (QFile::remove(tempFileName)) {
-                    qDebug() << "已删除临时PDF文件";
-                } else {
-                    qDebug() << "无法删除临时PDF文件，可能被其他程序占用";
-                    // 不显示错误消息，因为这是正常现象
-                }
-            }
-        });
-    });
+    // 调用通用管理函数，传入默认文件名和生成函数
+    managePDFReport("document.pdf", 
+                  [content, parent](const QString &fileName) { return generateReportPDFWith6Projects(fileName, content, parent); }, 
+                  parent);
 }
 
 // 生成临时PDF文件，预览并询问是否保存（用于Form_page1，接受自定义内容）
@@ -742,141 +677,35 @@ void PDFGenerator::generateAndManageReportPDF(const ReportContent &content, QWid
 {
     qDebug() << "开始生成Form_page1的PDF报告";
     
-    // 创建临时文件，用于存储PDF内容
-    QString tempFileName = QDir::temp().absoluteFilePath(QString("qt_temp_%1.pdf").arg(QDateTime::currentDateTime().toString("yyyyMMddhhmmsszzz")));
-
-    // 测试是否可以创建文件
-    QFile testFile(tempFileName);
-    if (!testFile.open(QIODevice::WriteOnly)) {
-        qWarning("无法创建临时文件");
-        if (parent) {
-            QMessageBox::critical(parent, "错误", "无法创建临时PDF文件");
-        }
-        return;
-    }
-    testFile.close();
-
-    qDebug() << "PDF临时文件路径：" << tempFileName;
-    qDebug() << "临时文件是否存在：" << QFile::exists(tempFileName);
-    qDebug() << "临时文件所在目录是否存在：" << QFileInfo(tempFileName).absoluteDir().exists();
-
-    // 使用PDFGenerator生成PDF
-    if (!generateReportPDF(tempFileName, content, parent)) {
-        return; // 如果生成失败，直接返回
-    }
-
-    qApp->processEvents(); // 处理所有待处理的事件
-
-    qDebug() << "PDF内容已生成，准备打开预览";
-
-    // 打开文件进行预览前，添加一个小延迟，确保文件完全写入和释放
-    QThread::msleep(300); // 延迟300毫秒
-    qApp->processEvents(); // 再次处理事件
-
-    // 检查文件是否存在且可读，而不是直接打开
-    qDebug() << "准备打开预览前 - 临时文件路径：" << tempFileName;
-    qDebug() << "准备打开预览前 - 临时文件是否存在：" << QFile::exists(tempFileName);
-
-    QFileInfo fileInfo(tempFileName);
-    if (fileInfo.exists() && fileInfo.isReadable()) {
-        
-        // 自动打开PDF文件进行预览
-        QUrl url = QUrl::fromLocalFile(tempFileName);
-        if (!QDesktopServices::openUrl(url)) {
-            qWarning("无法打开PDF文件进行预览");
-            if (parent) {
-                QMessageBox::warning(parent, "警告", "无法打开PDF预览，请手动查看临时文件：\n" + tempFileName);
-            }
-        }
-    } else {
-        qWarning("文件仍然被锁定，无法打开预览");
-        if (parent) {
-            QMessageBox::warning(parent, "警告", "PDF文件被锁定，无法打开预览。请稍后重试。");
-        }
-    }
-
-    // 使用QTimer延迟询问用户是否保存，给预览程序足够的时间打开文件
-    QTimer::singleShot(1000, parent, [=]() {
-        // 显示对话框，询问用户是否保存PDF
-        QMessageBox::StandardButton reply;
-        reply = QMessageBox::question(nullptr, "保存PDF", "是否保存此PDF文件？",
-                                     QMessageBox::Save | QMessageBox::Discard);
-
-        if (reply == QMessageBox::Save) {
-            // 用户选择保存，打开文件保存对话框
-            QString saveFileName = QFileDialog::getSaveFileName(
-                  nullptr, "保存PDF文件", "document.pdf", "PDF文件 (*.pdf)");
-
-            if (!saveFileName.isEmpty()) {
-                // 尝试多次复制文件，增加重试次数和延迟以处理文件锁定
-                bool copied = false;
-                int retryCount = 0;
-                const int maxRetries = 5; // 增加重试次数
-
-                while (!copied && retryCount < maxRetries) {
-                    int delayMs = 500 + (retryCount * 300); // 递增的延迟时间
-                    QThread::msleep(delayMs); // 每次重试前的延迟递增
-                    qApp->processEvents(); // 处理事件，确保文件系统操作正常
-
-                    qDebug() << "尝试复制文件（" << retryCount + 1 << "/" << maxRetries << ")，延迟：" << delayMs << "ms";
-                    qDebug() << "源文件：" << tempFileName;
-                    qDebug() << "目标文件：" << saveFileName;
-                    qDebug() << "源文件是否存在：" << QFile::exists(tempFileName);
-                    qDebug() << "目标文件是否存在：" << QFile::exists(saveFileName);
-
-                    // 如果目标文件存在，先尝试删除它
-                    if (QFile::exists(saveFileName)) {
-                        qDebug() << "目标文件已存在，尝试删除";
-                        if (!QFile::remove(saveFileName)) {
-                            qWarning() << "无法删除现有文件，可能被其他程序占用";
-                            retryCount++;
-                            continue;
-                        }
-                    }
-
-                    if (QFile::copy(tempFileName, saveFileName)) {
-                        copied = true;
-                        qDebug() << "PDF文件已保存到：" << saveFileName;
-                        QMessageBox::information(nullptr, "成功", "PDF文件已保存\n" + saveFileName);
-                    } else {
-                        retryCount++;
-                        qWarning() << "无法保存PDF文件到指定位置，正在重试（" << retryCount << "/" << maxRetries << ")";
-                    }
-                }
-
-                if (!copied) {
-                    qWarning("多次尝试后仍然无法保存PDF文件");
-                    // 提供一个替代方案
-                    QString message = QString("无法保存PDF文件。可能文件正被其他程序占用。\n\n")
-                                    + "临时文件位置：" + tempFileName + "\n\n"
-                                    + "请手动打开此文件夹并复制该文件。\n\n"
-                                    + "是否现在打开临时文件夹？";
-
-                    if (QMessageBox::Yes == QMessageBox::question(nullptr, "保存失败", message, QMessageBox::Yes | QMessageBox::No)) {
-                        QDesktopServices::openUrl(QUrl::fromLocalFile(QFileInfo(tempFileName).absolutePath()));
-                    }
-                }
-            }
-        }
-
-        // 尝试删除临时文件，但不强制
-        QTimer::singleShot(2000, [=]() {
-            if (QFile::exists(tempFileName)) {
-                if (QFile::remove(tempFileName)) {
-                    qDebug() << "已删除临时PDF文件";
-                } else {
-                    qDebug() << "无法删除临时PDF文件，可能被其他程序占用";
-                    // 不显示错误消息，因为这是正常现象
-                }
-            }
-        });
-    });
+    // 调用通用管理函数，传入默认文件名和生成函数
+    managePDFReport("document.pdf", 
+                  [content, parent](const QString &fileName) { return generateReportPDF(fileName, content, parent); }, 
+                  parent);
 }
 
 // 生成临时PDF文件，预览并询问是否保存（用于Form_page2）
 void PDFGenerator::generateAndManageTablePDF(QWidget *parent)
 {
     qDebug() << "开始生成Form_page2的PDF表格";
+    
+    // 调用通用管理函数，传入默认文件名和生成函数
+    managePDFReport("table.pdf", 
+                  [parent](const QString &fileName) { return generateTablePDF(fileName, parent); }, 
+                  parent);
+    
+    // 显示成功消息
+    if (parent) {
+        QMessageBox::information(parent, "成功", "PDF文件已成功生成！");
+    }
+}
+
+// 通用的PDF生成和管理函数
+//生成临时pdf文件用于预览，并在关闭时由用户选择是否保存
+void PDFGenerator::managePDFReport(const QString &defaultFileName, 
+                                  std::function<bool(const QString &)> generatorFunc, 
+                                  QWidget *parent)
+{
+    qDebug() << "开始生成PDF报告";
     
     // 创建临时文件，用于存储PDF内容
     QString tempFileName = QDir::temp().absoluteFilePath(QString("qt_temp_%1.pdf").arg(QDateTime::currentDateTime().toString("yyyyMMddhhmmsszzz")));
@@ -896,8 +725,8 @@ void PDFGenerator::generateAndManageTablePDF(QWidget *parent)
     qDebug() << "临时文件是否存在：" << QFile::exists(tempFileName);
     qDebug() << "临时文件所在目录是否存在：" << QFileInfo(tempFileName).absoluteDir().exists();
 
-    // 使用PDFGenerator生成PDF
-    if (!generateTablePDF(tempFileName, parent)) {
+    // 使用传入的生成函数生成PDF
+    if (!generatorFunc(tempFileName)) {
         return; // 如果生成失败，直接返回
     }
 
@@ -941,7 +770,7 @@ void PDFGenerator::generateAndManageTablePDF(QWidget *parent)
         if (reply == QMessageBox::Save) {
             // 用户选择保存，打开文件保存对话框
             QString saveFileName = QFileDialog::getSaveFileName(
-                  nullptr, "保存PDF文件", "table.pdf", "PDF文件 (*.pdf)");
+                  nullptr, "保存PDF文件", defaultFileName, "PDF文件 (*.pdf)");
 
             if (!saveFileName.isEmpty()) {
                 // 尝试多次复制文件，增加重试次数和延迟以处理文件锁定
@@ -1012,4 +841,15 @@ void PDFGenerator::generateAndManageTablePDF(QWidget *parent)
     if (parent) {
         QMessageBox::information(parent, "成功", "PDF文件已成功生成！");
     }
+}
+
+// 生成临时PDF文件，预览并询问是否保存（用于Form_page3）
+void PDFGenerator::generateAndManageFormPage3PDF(QWidget *parent)
+{
+    qDebug() << "开始生成Form_page3的PDF报告";
+    
+    // 调用通用管理函数，传入默认文件名和生成函数
+    managePDFReport("form_page3.pdf", 
+                  [parent](const QString &fileName) { return generateFormPage3PDF(fileName, parent); }, 
+                  parent);
 }

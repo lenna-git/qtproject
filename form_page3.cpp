@@ -1,6 +1,11 @@
 #include "form_page3.h"
 #include "ui_form_page3.h"
 #include<QVBoxLayout>
+#include<QPrinter>
+#include<QPainter>
+#include<QFileDialog>
+#include<QMessageBox>
+#include "pdfgenerator/pdfgenerator.h"
 
 Form_page3::Form_page3(QWidget *parent) :
     QWidget(parent),
@@ -21,6 +26,8 @@ Form_page3::Form_page3(QWidget *parent) :
     ui->label->setText("XXX检验结果");
     ui->label->setAlignment(Qt::AlignCenter);
 
+    ui->textEdit->setText("备注：空手道解放涉及多方了解实际发生经典服饰开始阶段了封建士大夫精神的");
+
     paintTable_all();
 }
 
@@ -30,8 +37,13 @@ Form_page3::~Form_page3()
     delete mTableGenerator;
 }
 
+void Form_page3::on_pushButton_clicked()
+{
+    // 调用PDFGenerator中的方法生成、预览和管理PDF文件
+    PDFGenerator::generateAndManageFormPage3PDF(this);
+}
 
-//绘制序列总表
+//绘制表
 void Form_page3::paintTable_all()
 {
     // 初始化表头 - 添加序号列和第四个表头名称

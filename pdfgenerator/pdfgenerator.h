@@ -5,6 +5,7 @@
 #include <QString>
 #include <QWidget>
 #include <QStringList>
+#include <functional>
 
 // 定义ReportContent结构体，用于存储可变动的报告内容
 typedef struct {
@@ -44,6 +45,9 @@ static bool generateReportPDFWith6Projects(const QString &fileName, const Report
 // 为Form_page2生成表格PDF
 static bool generateTablePDF(const QString &fileName, QWidget *parent = nullptr);
 
+// 为Form_page3生成PDF报告
+static bool generateFormPage3PDF(const QString &fileName, QWidget *parent = nullptr);
+
 
 
 // 生成临时PDF文件，预览并询问是否保存（用于Form_page1，接受自定义内容）
@@ -55,9 +59,20 @@ static void generateAndManageReportPDFWith6Projects(const ReportContent &content
     // 生成临时PDF文件，预览并询问是否保存（用于Form_page2）
 static void generateAndManageTablePDF(QWidget *parent = nullptr);
 
+    // 生成临时PDF文件，预览并询问是否保存（用于Form_page3）
+    static void generateAndManageFormPage3PDF(QWidget *parent = nullptr);
+
 signals:
     
 public slots:
+
+private:
+    PDFGenerator(); // 私有构造函数，防止实例化
+    
+    // 通用的PDF生成和管理函数
+    static void managePDFReport(const QString &defaultFileName, 
+                               std::function<bool(const QString &)> generatorFunc, 
+                               QWidget *parent);
 };
 
 #endif // PDFGENERATOR_H

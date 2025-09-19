@@ -42,6 +42,7 @@ void TableGenerator::generateTable(QStandardItemModel *model,
             {
                 QStandardItem *item = new QStandardItem;
                 item->setData(allFields.at(column), Qt::DisplayRole);
+                item->setTextAlignment(Qt::AlignCenter); // 设置单元格内容居中显示
                 model->setItem(i, column, item);
             }
         }
