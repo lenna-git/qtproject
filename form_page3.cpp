@@ -10,12 +10,15 @@ Form_page3::Form_page3(QWidget *parent) :
 {
     ui->setupUi(this);
     QVBoxLayout *alllayout = new QVBoxLayout(this);
-    alllayout->addWidget(ui->lineEdit);
+//    alllayout->addWidget(ui->lineEdit);
     alllayout->addWidget(ui->label);
     alllayout->addWidget(ui->tableView);
     alllayout->addWidget(ui->textEdit);
     alllayout->addWidget(ui->pushButton);
     ui->textEdit->setFixedHeight(100);
+
+    ui->label->setText("XXX检验结果");
+    ui->label->setAlignment(Qt::AlignCenter);
 
     paintTable_all();
 }
@@ -35,12 +38,12 @@ void Form_page3::paintTable_all()
     
     // 初始化数据列表
     QStringList values1, values2, values3, values4, values5, values6, values7, values8, values9;
-    values1 << "检验项目一" << "通过" << "未完全校验" << "ceshi1"<< "ceshi2";
+    values1 << "检验项目一" << "通过" << "未完全校验" << "ceshi1"<< "ceshi2_1";
     values2 << "检验项目2" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2";
     values3 << "检验项目3" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2";
     values4 << "检验项目4" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2";
     values5 << "检验项目5" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2";
-    values6 << "检验项目6" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2";
+    values6 << "检验项目6" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2_1";
     values7 << "检验项目7" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2";
     values8 << "检验项目8" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2";
     values9 << "检验项目9" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2";
@@ -55,8 +58,8 @@ void Form_page3::paintTable_all()
              << new stream_result_all_data(values8)
              << new stream_result_all_data(values9);
     
-    // 使用TableGenerator生成表格数据 - 使用增强版方法动态生成行列
-    mTableGenerator->generateTable(mTableViewModel, mHeader, datalist);
+    // 使用TableGenerator生成表格数据 - 使用增强版方法动态生成行列，并自动合并相同内容单元格
+    mTableGenerator->generateTable(mTableViewModel, ui->tableView, mHeader, datalist);
     
     // 使用TableGenerator设置表格视图
     mTableGenerator->setupTableView(ui->tableView, mTableViewModel);

@@ -7,6 +7,7 @@ TableGenerator::TableGenerator(QObject *parent) : QObject(parent)
 
 // generateTable方法实现（动态生成行列）
 void TableGenerator::generateTable(QStandardItemModel *model, 
+                                  QTableView *view, 
                                   const QStringList &header, 
                                   const QList<stream_result_all_data *> &dataList)
 {
@@ -45,6 +46,12 @@ void TableGenerator::generateTable(QStandardItemModel *model,
             }
         }
     }
+    
+    // 如果提供了视图指针，自动合并相同内容的单元格
+    if (view)
+    {
+        autoMergeSameCells(view, model);
+    }
 }
 
 // 设置表格视图的基本属性
@@ -73,4 +80,47 @@ void TableGenerator::mergeCells(QTableView *view, int row, int column, int rowSp
     
     // 执行单元格合并
     view->setSpan(row, column, rowSpan, columnSpan);
+}
+
+// 自动合并相同内容的单元格
+void TableGenerator::autoMergeSameCells(QTableView *view, QStandardItemModel *model)
+{
+    if (!view || !model)
+        return;
+    
+    int rowCount = model->rowCount();
+    int columnCount = model->columnCount();
+    
+    // 遍历每一列
+    for (int column = 0; column < columnCount; column++)
+    {
+        if (rowCount <= 1) // 如果行数小于等于1，不需要合并
+            continue;
+        
+        int startRow = 0;
+        QVariant startValue = model->data(model->index(startRow, column), Qt::DisplayRole);
+        
+        // 遍历当前列的每一行
+        for (int currentRow = 1; currentRow < rowCount; currentRow++)
+        {
+            QVariant currentValue = model->data(model->index(currentRow, column), Qt::DisplayRole);
+            
+            // 如果当前单元格的值与起始单元格的值不同，或者到达最后一行
+            if (currentValue != startValue || currentRow == rowCount - 1)
+            {
+                int span = currentValue != startValue ? currentRow - startRow : currentRow - startRow + 1;
+                
+                // 如果有两个或更多相同值的单元格，进行合并
+                if (span > 1)
+                {
+                    // 合并单元格，去除行横线
+                    mergeCells(view, startRow, column, span, 1);
+                }
+                
+                // 更新起始行和起始值
+                startRow = currentRow;
+                startValue = currentValue;
+            }
+        }
+    }
 }
