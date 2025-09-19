@@ -858,9 +858,10 @@ void PDFGenerator::generateAndManageTablePDF(QWidget *parent)
                   parent);
     
     // 显示成功消息
-    if (parent) {
-        QMessageBox::information(parent, "成功", "PDF文件已成功生成！");
-    }
+    // 已移除PDF生成成功弹窗
+    // if (parent) {
+    //     QMessageBox::information(parent, "成功", "PDF文件已成功生成！");
+    // }
 }
 
 // 通用的PDF生成和管理函数
@@ -1001,10 +1002,11 @@ void PDFGenerator::managePDFReport(const QString &defaultFileName,
         });
     });
     
+    // 已移除PDF生成成功弹窗
     // 显示成功消息
-    if (parent) {
-        QMessageBox::information(parent, "成功", "PDF文件已成功生成！");
-    }
+    // if (parent) {
+    //     QMessageBox::information(parent, "成功", "PDF文件已成功生成！");
+    // }
 }
 
 // 生成临时PDF文件，预览并询问是否保存（用于Form_page3）
