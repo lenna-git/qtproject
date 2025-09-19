@@ -31,19 +31,19 @@ Form_page3::~Form_page3()
 void Form_page3::paintTable_all()
 {
     // 初始化表头 - 添加第四个表头名称
-    mHeader<< "检验项目"<<"检验结果"<<"算法检验结果"<<"备注";
+    mHeader<< "检验项目"<<"检验结果"<<"算法检验结果"<<"备注"<<"备注2";
     
     // 初始化数据列表
     QStringList values1, values2, values3, values4, values5, values6, values7, values8, values9;
-    values1 << "检验项目一" << "通过" << "未完全校验" << "ceshi1";
-    values2 << "检验项目2" << "未校验" << "未完全校验" << "ceshi1";
-    values3 << "检验项目3" << "未校验" << "未完全校验" << "ceshi1";
-    values4 << "检验项目4" << "未校验" << "未完全校验" << "ceshi1";
-    values5 << "检验项目5" << "未校验" << "未完全校验" << "ceshi1";
-    values6 << "检验项目6" << "未校验" << "未完全校验" << "ceshi1";
-    values7 << "检验项目7" << "未校验" << "未完全校验" << "ceshi1";
-    values8 << "检验项目8" << "未校验" << "未完全校验" << "ceshi1";
-    values9 << "检验项目9" << "未校验" << "未完全校验" << "ceshi1";
+    values1 << "检验项目一" << "通过" << "未完全校验" << "ceshi1"<< "ceshi2";
+    values2 << "检验项目2" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2";
+    values3 << "检验项目3" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2";
+    values4 << "检验项目4" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2";
+    values5 << "检验项目5" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2";
+    values6 << "检验项目6" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2";
+    values7 << "检验项目7" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2";
+    values8 << "检验项目8" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2";
+    values9 << "检验项目9" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2";
     
     datalist << new stream_result_all_data(values1)
              << new stream_result_all_data(values2)

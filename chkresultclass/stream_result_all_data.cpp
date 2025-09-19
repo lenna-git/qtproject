@@ -3,9 +3,9 @@
 // 内部方法：初始化字段名
 void stream_result_all_data::initFieldNames()
 {
-    // 设置默认的字段名
+    // 设置默认的字段名，统一使用默认命名方式
     m_fieldNames.clear();
-    m_fieldNames << "testitem" << "testresult" << "wholeresult";
+    m_fieldNames << "field1" << "field2" << "field3";
 }
 
 // 默认构造函数
@@ -21,13 +21,10 @@ stream_result_all_data::stream_result_all_data(const QStringList &fieldValues)
 {
     m_fieldValues = fieldValues;
     
-    // 为每个字段值创建默认字段名
+    // 为每个字段值创建默认字段名，所有字段统一使用默认命名方式
     m_fieldNames.clear();
     for (int i = 0; i < m_fieldValues.size(); ++i) {
-        if (i == 0) m_fieldNames << "testitem";    // 第一个字段保持为testitem
-        else if (i == 1) m_fieldNames << "testresult";  // 第二个字段保持为testresult
-        else if (i == 2) m_fieldNames << "wholeresult";  // 第三个字段保持为wholeresult
-        else m_fieldNames << QString("field%1").arg(i+1);  // 其他字段使用默认命名
+        m_fieldNames << QString("field%1").arg(i+1);  // 所有字段使用默认命名
     }
 }
 
@@ -67,12 +64,8 @@ void stream_result_all_data::addField(const QString &name, const QString &value)
 // 添加不带名称的字段（使用默认名称）
 void stream_result_all_data::addField(const QString &value)
 {
+    // 所有字段统一使用默认命名方式
     QString fieldName = QString("field%1").arg(m_fieldNames.size()+1);
-    
-    // 如果是前三个字段，使用传统名称
-    if (m_fieldNames.size() == 0) fieldName = "testitem";
-    else if (m_fieldNames.size() == 1) fieldName = "testresult";
-    else if (m_fieldNames.size() == 2) fieldName = "wholeresult";
     
     m_fieldNames << fieldName;
     m_fieldValues << value;
@@ -142,22 +135,4 @@ QStringList stream_result_all_data::getFieldNames() const
 int stream_result_all_data::fieldCount() const
 {
     return m_fieldValues.size();
-}
-
-// 兼容性方法：获取检验项目
-QString stream_result_all_data::testitem() const
-{
-    return getField(0);  // 第一个字段始终是检验项目
-}
-
-// 兼容性方法：获取检验结果
-QString stream_result_all_data::testresult() const
-{
-    return getField(1);  // 第二个字段始终是检验结果
-}
-
-// 兼容性方法：获取算法检验结果
-QString stream_result_all_data::wholeresult() const
-{
-    return getField(2);  // 第三个字段始终是算法检验结果
 }

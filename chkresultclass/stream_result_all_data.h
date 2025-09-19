@@ -32,10 +32,7 @@ public:
     // 获取字段数量
     int fieldCount() const;
     
-    // 兼容性方法，保持与原有代码的兼容
-    QString testitem() const;
-    QString testresult() const;
-    QString wholeresult() const;
+
 
 private:
     QStringList m_fieldValues;  // 存储所有字段的值
