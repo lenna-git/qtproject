@@ -661,7 +661,7 @@ bool PDFGenerator::generateFormPage3PDF(const QString &fileName, QWidget *parent
 
 
 
-// 生成临时PDF文件，预览并询问是否保存（用于Form_page1，只有6个检验项目）
+// 用于Form_page1生成只有6个检验项目的pdf
 void PDFGenerator::generateAndManageReportPDFWith6Projects(const ReportContent &content, QWidget *parent)
 {
     qDebug() << "开始生成Form_page1的PDF报告（6个检验项目版本）"; 
@@ -672,7 +672,7 @@ void PDFGenerator::generateAndManageReportPDFWith6Projects(const ReportContent &
                   parent);
 }
 
-// 生成临时PDF文件，预览并询问是否保存（用于Form_page1，接受自定义内容）
+// Form_page1生成9个检验项目的pdf
 void PDFGenerator::generateAndManageReportPDF(const ReportContent &content, QWidget *parent)
 {
     qDebug() << "开始生成Form_page1的PDF报告";
@@ -802,7 +802,7 @@ void PDFGenerator::managePDFReport(const QString &defaultFileName,
                     if (QFile::copy(tempFileName, saveFileName)) {
                         copied = true;
                         qDebug() << "PDF文件已保存到：" << saveFileName;
-                        QMessageBox::information(nullptr, "成功", "PDF文件已保存\n" + saveFileName);
+//                        QMessageBox::information(nullptr, "成功", "PDF文件已保存\n" + saveFileName);
                     } else {
                         retryCount++;
                         qWarning() << "无法保存PDF文件到指定位置，正在重试（" << retryCount << "/" << maxRetries << ")";
