@@ -4,6 +4,7 @@
 #include <QWidget>
 #include<QStandardItemModel>
 #include"chkresultclass/stream_result_all_data.h"
+#include"tablegenerator/tablegenerator.h"
 
 namespace Ui {
 class Form_page3;
@@ -22,6 +23,7 @@ private:
     QStandardItemModel*  mTableViewModel ;
     QStringList mHeader;
     QList<stream_result_all_data *> datalist;
+    TableGenerator *mTableGenerator;
 
     void paintTable_all();
 };

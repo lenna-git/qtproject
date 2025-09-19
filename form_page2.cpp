@@ -1,6 +1,6 @@
 #include "form_page2.h"
 #include "ui_form_page2.h"
-#include "pdfgenerator.h"
+#include "pdfgenerator/pdfgenerator.h"
 #include <QPainter>
 #include <QPen>
 #include <QRectF>

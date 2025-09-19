@@ -1,6 +1,6 @@
 #include "form_page1.h"
 #include "ui_form_page1.h"
-#include "pdfgenerator.h"
+#include "pdfgenerator/pdfgenerator.h"
 #include<QVBoxLayout>
 #include<QPushButton>
 #include<QTextEdit>

@@ -5,7 +5,8 @@
 Form_page3::Form_page3(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::Form_page3),
-    mTableViewModel(new QStandardItemModel)
+    mTableViewModel(new QStandardItemModel),
+    mTableGenerator(new TableGenerator)
 {
     ui->setupUi(this);
     QVBoxLayout *alllayout = new QVBoxLayout(this);
@@ -22,18 +23,17 @@ Form_page3::Form_page3(QWidget *parent) :
 Form_page3::~Form_page3()
 {
     delete ui;
+    delete mTableGenerator;
 }
 
 
 //绘制序列总表
 void Form_page3::paintTable_all()
 {
-
-
+    // 初始化表头
     mHeader<< "检验项目"<<"检验结果"<<"算法检验结果";
-    mTableViewModel->setHorizontalHeaderLabels(mHeader);
-    mTableViewModel->setColumnCount(mHeader.size());
-
+    
+    // 初始化数据列表
     datalist<<new stream_result_all_data("检验项目一","通过","未完全校验")
             <<new stream_result_all_data("检验项目2","未校验","未完全校验")
             <<new stream_result_all_data("检验项目3","未校验","未完全校验")
@@ -43,29 +43,13 @@ void Form_page3::paintTable_all()
             <<new stream_result_all_data("检验项目7","未校验","未完全校验")
             <<new stream_result_all_data("检验项目8","未校验","未完全校验")
             <<new stream_result_all_data("检验项目9","未校验","未完全校验");
-
-    for(int i=0;i<datalist.size();i++){
-        stream_result_all_data *tmp = datalist.at(i);
-        QStandardItem *item0 = new QStandardItem;
-        item0->setData(tmp->m_testitem,Qt::DisplayRole);
-        QStandardItem *item1 = new QStandardItem;
-        item1->setData(tmp->m_testresult,Qt::DisplayRole);
-
-        QStandardItem *item3 = new QStandardItem;
-        item3->setData(tmp->m_wholeresult,Qt::DisplayRole);
-
-
-        mTableViewModel->setItem(i,0,item0);
-        mTableViewModel->setItem(i,1,item1);
-        mTableViewModel->setItem(i,2,item3);
-
-    }
-
-    ui->tableView->setModel(mTableViewModel);
-
-    //合并第3列到一行
-    ui->tableView->setSpan(0,2,9,1);
-
-    ui->tableView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-
+    
+    // 使用TableGenerator生成表格数据
+    mTableGenerator->generateTable(mTableViewModel, mHeader, datalist);
+    
+    // 使用TableGenerator设置表格视图
+    mTableGenerator->setupTableView(ui->tableView, mTableViewModel);
+    
+    // 使用TableGenerator合并单元格
+    mTableGenerator->mergeCells(ui->tableView, 0, 2, 9, 1);
 }
