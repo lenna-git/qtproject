@@ -5,6 +5,7 @@
 #include<QPainter>
 #include<QFileDialog>
 #include<QMessageBox>
+#include<QDebug>
 #include "pdfgenerator/pdfgenerator.h"
 
 Form_page3::Form_page3(QWidget *parent) :
@@ -21,6 +22,7 @@ Form_page3::Form_page3(QWidget *parent) :
     alllayout->addWidget(ui->tableView);
     alllayout->addWidget(ui->textEdit);
     alllayout->addWidget(ui->pushButton);
+    alllayout->addWidget(ui->pushButton_2);
     ui->textEdit->setFixedHeight(100);
 
     ui->label->setText("XXX检验结果");
@@ -93,4 +95,23 @@ void Form_page3::paintTable_all()
         ui->tableView->horizontalHeader()->setSectionResizeMode(i, QHeaderView::Stretch);
     }
     
+}
+
+void Form_page3::on_pushButton_2_clicked()
+{
+    qDebug()<<"on_pushButton_2_clicked开始执行PDF生成功能";    
+    // 获取界面中的标题、备注信息和已有的数据列表
+    QString title = ui->label->text();
+    QString remarks = ui->textEdit->toPlainText();
+
+    
+    // 调用PDFGenerator中的新方法，使用数据列表和表头直接生成PDF
+    bool result = PDFGenerator::generateFormPage3PDFWithDataList(title, datalist, mHeader, remarks);
+    
+    // 已移除PDF生成结果弹窗提示
+    // 如果需要调试信息，可以通过qDebug查看结果
+    qDebug() << "PDF生成结果: " << (result ? "成功" : "失败");
+    
+    qDebug()<<"on_pushButton_2_clicked执行完成";
+
 }

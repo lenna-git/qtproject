@@ -18,6 +18,7 @@
 #include <QLabel>
 #include <QFontDatabase>
 #include<QStandardItemModel>
+#include "../chkresultclass/stream_result_all_data.h"
 
 PDFGenerator::PDFGenerator(QObject *parent) : QObject(parent)
 {
@@ -1086,4 +1087,58 @@ void PDFGenerator::generateAndManageFormPage3PDF(const QString &title, QAbstract
     managePDFReport("检验结果报告.pdf", [=](const QString &fileName) {
         return generateFormPage3PDF(title, model, remarks, fileName);
     }, nullptr);
+}
+
+// 新函数：根据标题、datalist、表头和备注生成PDF，自动转换datalist为model，然后生成pdf
+bool PDFGenerator::generateFormPage3PDFWithDataList(const QString &title, const QList<stream_result_all_data *> &dataList, const QStringList &mheader, const QString &remarks, const QString &fileName)
+{
+    // 创建QStandardItemModel来存储表格数据
+    QStandardItemModel *model = new QStandardItemModel();
+    
+    // 检查datalist是否为空
+    if (dataList.isEmpty()) {
+        qWarning("数据列表为空，无法生成表格内容");
+        delete model;
+        return false;
+    }
+    
+    // 设置表头
+    QStringList headers;
+    if (!mheader.isEmpty()) {
+        // 优先使用传入的mheader作为表头
+        headers = mheader;
+    } else {
+        // 如果没有传入表头，尝试从dataList中获取字段名
+        const QStringList fieldNames = dataList.first()->getFieldNames();
+        if (!fieldNames.isEmpty()) {
+            headers = fieldNames;
+        } else {
+            // 如果都没有，使用默认的列名
+            int fieldCount = dataList.first()->fieldCount();
+            for (int i = 0; i < fieldCount; ++i) {
+                headers << QString("列%1").arg(i + 1);
+            }
+        }
+    }
+    model->setHorizontalHeaderLabels(headers);
+    
+    // 填充表格数据
+    for (int row = 0; row < dataList.size(); ++row) {
+        const stream_result_all_data *data = dataList.at(row);
+        for (int col = 0; col < data->fieldCount(); ++col) {
+            QString value = data->getField(col);
+            QStandardItem *item = new QStandardItem(value);
+            item->setTextAlignment(Qt::AlignCenter);
+            model->setItem(row, col, item);
+        }
+    }
+    
+    // 调用现有的generateFormPage3PDF函数生成PDF
+//    bool result = generateFormPage3PDF(title, model, remarks, fileName);
+    generateAndManageFormPage3PDF(title, model, remarks);
+    
+    // 清理临时创建的model
+    delete model;
+    
+    return true;
 }
