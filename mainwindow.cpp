@@ -14,7 +14,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     QHBoxLayout *wholelayout = new QHBoxLayout(ui->centralWidget);
 
-    this->resize(1600,1200);
+    this->resize(1200,800);
 
 
     QWidget *widgetleft = new QWidget;

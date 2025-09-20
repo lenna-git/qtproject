@@ -26,7 +26,13 @@ Form_page3::Form_page3(QWidget *parent) :
     ui->label->setText("XXX检验结果");
     ui->label->setAlignment(Qt::AlignCenter);
 
-    ui->textEdit->setText("备注：空手道解放涉及多方了解实际发生经典服饰开始阶段了封建士大夫精神的");
+    ui->textEdit->setText(
+                "备注：空手道解放涉及多方了解实际发生经典服饰开始阶段了封建士大夫精神的"
+                          "空手道解放涉及多方了解实际发生经典服饰开始阶段了封建士大夫精神的"
+                          "空手道解放涉及多方了解实际发生经典服饰开始阶段了封建士大夫精神的"
+                          "123空手道解放涉及多方了解实际发生经典服饰开始阶段了封建士大夫精神的"
+                          "456空手道解放涉及多方了解实际发生经典服饰开始阶段了封建士大夫精神的"
+                );
 
     paintTable_all();
 }
@@ -40,7 +46,8 @@ Form_page3::~Form_page3()
 void Form_page3::on_pushButton_clicked()
 {
     // 调用PDFGenerator中的方法生成、预览和管理PDF文件
-    PDFGenerator::generateAndManageFormPage3PDF(this);
+//    PDFGenerator::generateAndManageFormPage3PDF(this);
+    PDFGenerator::generateAndManageFormPage3PDF(ui->label->text(),ui->tableView->model(),ui->textEdit->toPlainText());
 }
 
 //绘制表

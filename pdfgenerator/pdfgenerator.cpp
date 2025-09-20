@@ -17,6 +17,7 @@
 #include <QTextEdit>
 #include <QLabel>
 #include <QFontDatabase>
+#include<QStandardItemModel>
 
 PDFGenerator::PDFGenerator(QObject *parent) : QObject(parent)
 {
@@ -208,7 +209,7 @@ bool PDFGenerator::generateReportPDFWith6Projects(const QString &fileName, const
     painter.drawText(QRectF(tableLeft, currentY, col1Width, lineHeight), Qt::AlignCenter, "检验水平");
     painter.drawText(QRectF(tableLeft + col1Width, currentY, tableWidth - col1Width, lineHeight), Qt::AlignCenter, content.testLevel);
 
-    // 绘制检验项目部分（修改为6个项目）
+    // 绘制检验项目部分
     currentY += lineHeight;
     painter.drawLine(tableLeft, currentY, tableLeft + tableWidth, currentY);
     painter.drawLine(tableLeft + col1Width, currentY, tableLeft + col1Width, currentY + lineHeight * 6); // 第一列垂直分隔线（已增加到150宽度）
@@ -286,7 +287,110 @@ bool PDFGenerator::generateReportPDFWith6Projects(const QString &fileName, const
     return true;
 }
 
-// 为Form_page1绘制DF报告（接受自定义内容）
+// 为Form_page2生成表格PDF
+bool PDFGenerator::generateTablePDF(const QString &fileName, QWidget *parent)
+{
+    // 创建打印机对象
+    QPrinter printer(QPrinter::HighResolution);
+    printer.setOutputFormat(QPrinter::PdfFormat);
+    printer.setOutputFileName(fileName);
+
+    // 创建QPainter用于PDF绘制
+    QPainter painter;
+    if (!painter.begin(&printer)) {
+        if (parent) {
+            QMessageBox::critical(parent, "错误", "无法创建PDF文件");
+        }
+        return false;
+    }
+
+    // 设置绘图属性
+    painter.setRenderHint(QPainter::Antialiasing, true);
+
+    // 设置画笔
+    QPen pen(Qt::black, 1);
+    painter.setPen(pen);
+
+    // 获取PDF页面的尺寸
+    QRectF pageRect = printer.pageRect(QPrinter::DevicePixel);
+
+    // 计算表格尺寸和位置（保留边距）
+    qreal margin = 50; // 边距
+    qreal tableWidth = pageRect.width() - 2 * margin;
+    qreal tableHeight = pageRect.height() - 2 * margin;
+    qreal tableLeft = margin;
+    qreal tableTop = margin;
+
+    // 确保表格有足够的空间
+    if (tableWidth <= 0 || tableHeight <= 0) {
+        painter.end();
+        return false;
+    }
+
+    // 计算每个单元格的宽度和高度
+    int rows = 4;
+    int cols = 7;
+    qreal cellWidth = tableWidth / cols;
+    qreal cellHeight = tableHeight / rows;
+
+    // 绘制4行7列的表格
+    // 绘制横线
+    for (int i = 0; i <= rows; i++) {
+        qreal y = tableTop + i * cellHeight;
+        // 跳过2.1和3.1单元格之间的横线
+        if (i == 2) {
+            // 只绘制第一列之外的横线
+            painter.drawLine(tableLeft + cellWidth, y, tableLeft + tableWidth, y);
+        } else {
+            painter.drawLine(tableLeft, y, tableLeft + tableWidth, y);
+        }
+    }
+
+    // 绘制竖线（完整显示所有竖线）
+    for (int j = 0; j <= cols; j++) {
+        qreal x = tableLeft + j * cellWidth;
+        painter.drawLine(x, tableTop, x, tableTop + tableHeight);
+    }
+
+    // 绘制表格内容
+    painter.setFont(QFont("Arial", 10));
+    // 第一行为标题行，显示标题一到标题七
+    painter.setFont(QFont("Arial", 10, QFont::Bold)); // 标题行使用粗体
+    for (int j = 0; j < cols; j++) {
+        QRectF cellRect(tableLeft + j * cellWidth, tableTop, cellWidth, cellHeight);
+        QString titleText = QString("标题%1").arg(j+1);
+        painter.drawText(cellRect, Qt::AlignCenter, titleText);
+    }
+
+    // 其他行显示数据
+    painter.setFont(QFont("Arial", 10)); // 恢复普通字体
+    for (int i = 1; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+            // 处理合并单元格
+            if (i == 1 && j == 0) {
+                // 合并2.1和3.1单元格
+                QRectF mergedCellRect(tableLeft, tableTop + cellHeight, cellWidth, 2 * cellHeight);
+                QString mergedText = "合并单元格\n(2.1+3.1)";
+                painter.drawText(mergedCellRect, Qt::AlignCenter | Qt::TextWordWrap, mergedText);
+                // 跳过3.1单元格的绘制
+                continue;
+            }
+            // 跳过已合并的3.1单元格
+            if (i == 2 && j == 0) {
+                continue;
+            }
+            QRectF cellRect(tableLeft + j * cellWidth, tableTop + i * cellHeight, cellWidth, cellHeight);
+            QString cellText = QString("%1,%2").arg(i+1).arg(j+1);
+            painter.drawText(cellRect, Qt::AlignCenter, cellText);
+        }
+    }
+
+    // 完成绘制
+    painter.end();
+    return true;
+}
+
+// 为Form_page1绘制PDF报告（接受自定义内容）
 bool PDFGenerator::generateReportPDF(const QString &fileName, const ReportContent &content, QWidget *parent)
 {
 
@@ -546,122 +650,29 @@ bool PDFGenerator::generateReportPDF(const QString &fileName, const ReportConten
     return true;
 }
 
-// 为Form_page2生成表格PDF
-bool PDFGenerator::generateTablePDF(const QString &fileName, QWidget *parent)
-{
-    // 创建打印机对象
-    QPrinter printer(QPrinter::HighResolution);
-    printer.setOutputFormat(QPrinter::PdfFormat);
-    printer.setOutputFileName(fileName);
-
-    // 创建QPainter用于PDF绘制
-    QPainter painter;
-    if (!painter.begin(&printer)) {
-        if (parent) {
-            QMessageBox::critical(parent, "错误", "无法创建PDF文件");
-        }
-        return false;
-    }
-
-    // 设置绘图属性
-    painter.setRenderHint(QPainter::Antialiasing, true);
-
-    // 设置画笔
-    QPen pen(Qt::black, 1);
-    painter.setPen(pen);
-
-    // 获取PDF页面的尺寸
-    QRectF pageRect = printer.pageRect(QPrinter::DevicePixel);
-
-    // 计算表格尺寸和位置（保留边距）
-    qreal margin = 50; // 边距
-    qreal tableWidth = pageRect.width() - 2 * margin;
-    qreal tableHeight = pageRect.height() - 2 * margin;
-    qreal tableLeft = margin;
-    qreal tableTop = margin;
-
-    // 确保表格有足够的空间
-    if (tableWidth <= 0 || tableHeight <= 0) {
-        painter.end();
-        return false;
-    }
-
-    // 计算每个单元格的宽度和高度
-    int rows = 4;
-    int cols = 7;
-    qreal cellWidth = tableWidth / cols;
-    qreal cellHeight = tableHeight / rows;
-
-    // 绘制4行7列的表格
-    // 绘制横线
-    for (int i = 0; i <= rows; i++) {
-        qreal y = tableTop + i * cellHeight;
-        // 跳过2.1和3.1单元格之间的横线
-        if (i == 2) {
-            // 只绘制第一列之外的横线
-            painter.drawLine(tableLeft + cellWidth, y, tableLeft + tableWidth, y);
-        } else {
-            painter.drawLine(tableLeft, y, tableLeft + tableWidth, y);
-        }
-    }
-
-    // 绘制竖线（完整显示所有竖线）
-    for (int j = 0; j <= cols; j++) {
-        qreal x = tableLeft + j * cellWidth;
-        painter.drawLine(x, tableTop, x, tableTop + tableHeight);
-    }
-
-    // 绘制表格内容
-    painter.setFont(QFont("Arial", 10));
-    // 第一行为标题行，显示标题一到标题七
-    painter.setFont(QFont("Arial", 10, QFont::Bold)); // 标题行使用粗体
-    for (int j = 0; j < cols; j++) {
-        QRectF cellRect(tableLeft + j * cellWidth, tableTop, cellWidth, cellHeight);
-        QString titleText = QString("标题%1").arg(j+1);
-        painter.drawText(cellRect, Qt::AlignCenter, titleText);
-    }
-
-    // 其他行显示数据
-    painter.setFont(QFont("Arial", 10)); // 恢复普通字体
-    for (int i = 1; i < rows; i++) {
-        for (int j = 0; j < cols; j++) {
-            // 处理合并单元格
-            if (i == 1 && j == 0) {
-                // 合并2.1和3.1单元格
-                QRectF mergedCellRect(tableLeft, tableTop + cellHeight, cellWidth, 2 * cellHeight);
-                QString mergedText = "合并单元格\n(2.1+3.1)";
-                painter.drawText(mergedCellRect, Qt::AlignCenter | Qt::TextWordWrap, mergedText);
-                // 跳过3.1单元格的绘制
-                continue;
-            }
-            // 跳过已合并的3.1单元格
-            if (i == 2 && j == 0) {
-                continue;
-            }
-            QRectF cellRect(tableLeft + j * cellWidth, tableTop + i * cellHeight, cellWidth, cellHeight);
-            QString cellText = QString("%1,%2").arg(i+1).arg(j+1);
-            painter.drawText(cellRect, Qt::AlignCenter, cellText);
-        }
-    }
-
-    // 完成绘制
-    painter.end();
-    return true;
-}
-
 // 为Form_page3生成PDF报告
-bool PDFGenerator::generateFormPage3PDF(const QString &fileName, QWidget *parent)
+bool PDFGenerator::generateFormPage3PDF(const QString &title, QAbstractItemModel *model, const QString &remarks, const QString &fileName)
 {
-    // 确保传入的父窗口不为空且是Form_page3类型
-    if (!parent) {
-        qWarning("父窗口为空，无法获取Form_page3的数据");
+    // 确保必要的参数不为空
+    if (model == nullptr) {
+        qWarning("模型为空，无法生成表格内容");
         return false;
+    }
+    // 如果没有提供fileName参数，则显示保存对话框让用户选择
+    QString outputFileName;
+    if (fileName.isEmpty()) {
+        outputFileName = QFileDialog::getSaveFileName(nullptr, "保存PDF文件", QDir::homePath(), "PDF文件 (*.pdf)");
+        if (outputFileName.isEmpty()) {
+            return false; // 用户取消保存
+        }
+    } else {
+        outputFileName = fileName; // 使用传入的文件名
     }
 
     // 创建QPrinter对象并配置为PDF输出
     QPrinter printer(QPrinter::HighResolution);
     printer.setOutputFormat(QPrinter::PdfFormat);
-    printer.setOutputFileName(fileName);
+    printer.setOutputFileName(outputFileName);
 
     // 设置页面属性
     printer.setPageSize(QPrinter::A4);  // 设置A4纸张
@@ -675,9 +686,6 @@ bool PDFGenerator::generateFormPage3PDF(const QString &fileName, QWidget *parent
     QPainter painter;
     if (!painter.begin(&printer)) {
         qWarning("无法创建PDF文件");
-        if (parent) {
-            QMessageBox::critical(parent, "错误", "无法创建PDF文件");
-        }
         return false;
     }
 
@@ -697,125 +705,151 @@ bool PDFGenerator::generateFormPage3PDF(const QString &fileName, QWidget *parent
     painter.setFont(font);
     qDebug() << "设置字体: " << font.family() << ", 大小: " << font.pointSize();
 
-    // 从父窗口获取Form_page3的UI元素
-    QLabel *titleLabel = parent ? parent->findChild<QLabel*>("label") : nullptr;
-    QTableView *tableView = parent ? parent->findChild<QTableView*>("tableView") : nullptr;
-    QTextEdit *textEdit = parent ? parent->findChild<QTextEdit*>("textEdit") : nullptr;
-
     // 调试信息
     qDebug() << "正在生成Form_page3的PDF报告";
-    qDebug() << "是否找到label:" << (titleLabel ? "是" : "否") << "，文本:" << (titleLabel ? titleLabel->text() : "无");
-    qDebug() << "是否找到tableView:" << (tableView ? "是" : "否") << "，是否有model:" << (tableView && tableView->model() ? "是" : "否");
-    qDebug() << "是否找到textEdit:" << (textEdit ? "是" : "否") << "，文本:" << (textEdit ? textEdit->toPlainText() : "无");
+    qDebug() << "标题内容:" << title;
+    qDebug() << "表格行数:" << model->rowCount() << "，表格列数:" << model->columnCount();
+    qDebug() << "备注内容:" << remarks;
 
-    // 1. 绘制标题（使用label的内容）
-    QString titleText = titleLabel ? titleLabel->text() : "检验结果报告";
+    // 1. 绘制标题
+    QString titleText = title.isEmpty() ? "检验结果报告" : title;
+    // 保存当前字体设置
+    QFont originalFont = font;
+    // 临时设置标题字体
     font.setPointSize(16);
     font.setBold(true);
     painter.setFont(font);
-    // 按照用户要求将标题行高度从40增加到300
+    // 绘制标题
     painter.drawText(QRectF(0, 20, pageWidth, 300), Qt::AlignCenter, titleText);
-    font.setPointSize(7); // 使用一致的小字体大小
-    font.setBold(false);
+    // 恢复原始字体设置
+    font = originalFont;
     painter.setFont(font);
 
-    // 2. 绘制表格内容（与tableView一致）
+    // 2. 绘制表格内容
     qreal tableTop = 350; // 增加表格起始位置，避免与标题重叠
     qreal tableLeft = 30; // 增加左边距
     qreal tableWidth = pageWidth - 60; // 减小表格宽度，增加页边距
+
+    int rowCount = model->rowCount();
+    int columnCount = model->columnCount();
     
-    if (tableView && tableView->model()) {
-        QAbstractItemModel *model = tableView->model();
-        if (model) {
-            int rowCount = model->rowCount();
-            int columnCount = model->columnCount();
-            
-            // 计算行高和列宽 - 按照用户要求将行高大幅增加到200
-            qreal headerHeight = 200;
-            qreal rowHeight = 200;
-            qreal tableHeight = headerHeight + rowHeight * rowCount; // 表头和数据行
-            qDebug() << "表格行高设置 - 表头: " << headerHeight << ", 数据行: " << rowHeight;
-            
-            // 检查是否需要更多页面空间
-            // 为每个表格预留足够空间，防止跨页导致的布局问题
-            if (tableTop + tableHeight + 150 > pageHeight) { // 为备注留出更多空间
-                printer.newPage();
-                tableTop = 20;
-            }
-            
-            // 绘制表头
-            font.setBold(true);
-            font.setPointSize(7); // 确保表头使用正确的字体大小
-            painter.setFont(font);
-            
-            // 直接使用均匀分布的列宽，避免从tableView继承的窄列宽问题
-            QVector<qreal> columnWidths;
-            qreal uniformWidth = tableWidth / columnCount;
-            for (int col = 0; col < columnCount; ++col) {
-                columnWidths.append(uniformWidth);
-            }
-            
-            // 添加调试信息
-            qDebug() << "表格列宽设置 - 列数: " << columnCount << ", 每列宽度: " << uniformWidth;
-            
-            // 绘制表头
-            qreal currentX = tableLeft;
-            for (int col = 0; col < columnCount; ++col) {
-                QRectF headerRect(currentX, tableTop, columnWidths[col], headerHeight);
-                painter.drawRect(headerRect);
-                QString headerText = model->headerData(col, Qt::Horizontal).toString();
-                painter.drawText(headerRect, Qt::AlignCenter | Qt::TextWordWrap, headerText);
-                currentX += columnWidths[col];
-            }
-            
-            // 绘制数据行
-            font.setBold(false);
-            font.setPointSize(7); // 确保数据行使用正确的字体大小
-            painter.setFont(font);
-            
-            for (int row = 0; row < rowCount; ++row) {
-                currentX = tableLeft;
-                qreal currentY = tableTop + headerHeight + row * rowHeight;
-                
-                for (int col = 0; col < columnCount; ++col) {
-                    QRectF cellRect(currentX, currentY, columnWidths[col], rowHeight);
-                    painter.drawRect(cellRect);
-                    QModelIndex index = model->index(row, col);
-                    QString cellText = model->data(index).toString();
-                    // 绘制单元格文本，确保中文正常显示并自动换行
-                    painter.drawText(cellRect, Qt::AlignCenter | Qt::TextWordWrap, cellText);
-                    currentX += columnWidths[col];
-                }
-            }
-            
-            // 添加调试信息
-            qDebug() << "Form_page3 PDF生成完成 - 使用的设置：";
-            qDebug() << "页面尺寸: " << pageWidth << "x" << pageHeight;
-            qDebug() << "字体: " << font.family() << ", 大小: " << font.pointSize();
-            qDebug() << "表格设置 - 表头高度: " << headerHeight << ", 数据行高度: " << rowHeight;
-            qDebug() << "表格总高度: " << tableHeight;
-            
-            // 3. 绘制textEdit的内容（表格下方）
-            qreal remarksTop = tableTop + tableHeight + 20;
-            QString remarksText = textEdit ? textEdit->toPlainText() : "";
-            
-            if (!remarksText.isEmpty()) {
-                QRectF remarksRect(tableLeft, remarksTop, tableWidth, 100);
-                painter.drawText(remarksRect, Qt::AlignTop | Qt::TextWordWrap, remarksText);
-            }
-        }
-    } else {
-        // 当无法获取tableView时，显示提示信息
-        painter.drawText(QRectF(tableLeft, tableTop, tableWidth, 40), 
-                         Qt::AlignCenter, "无法获取表格数据");
+    // 计算行高和列宽 - 按照用户要求将行高大幅增加到200
+    qreal headerHeight = 200;
+    qreal rowHeight = 200;
+    qreal tableHeight = headerHeight + rowHeight * rowCount; // 表头和数据行
+    qDebug() << "表格行高设置 - 表头: " << headerHeight << ", 数据行: " << rowHeight;
+    
+    // 检查是否需要更多页面空间
+    // 为每个表格预留足够空间，防止跨页导致的布局问题
+    if (tableTop + tableHeight + 150 > pageHeight) { // 为备注留出更多空间
+        printer.newPage();
+        tableTop = 20;
+    }
+    
+    // 绘制表头
+    font.setBold(true);
+    font.setPointSize(7); // 确保表头使用正确的字体大小
+    painter.setFont(font);
+    
+    // 直接使用均匀分布的列宽
+    QVector<qreal> columnWidths;
+    qreal uniformWidth = tableWidth / columnCount;
+    for (int col = 0; col < columnCount; ++col) {
+        columnWidths.append(uniformWidth);
+    }
+    
+    // 添加调试信息
+    qDebug() << "表格列宽设置 - 列数: " << columnCount << ", 每列宽度: " << uniformWidth;
+    
+    // 绘制表头
+    qreal currentX = tableLeft;
+    for (int col = 0; col < columnCount; ++col) {
+        QRectF headerRect(currentX, tableTop, columnWidths[col], headerHeight);
+        painter.drawRect(headerRect);
+        QString headerText = model->headerData(col, Qt::Horizontal).toString();
+        painter.drawText(headerRect, Qt::AlignCenter | Qt::TextWordWrap, headerText);
+        currentX += columnWidths[col];
+    }
+    
+    // 绘制数据行
+    font.setBold(false);
+    font.setPointSize(7); // 确保数据行使用正确的字体大小
+    painter.setFont(font);
+    
+    for (int row = 0; row < rowCount; ++row) {
+        currentX = tableLeft;
+        qreal currentY = tableTop + headerHeight + row * rowHeight;
         
-        // 如果有备注，仍然显示备注
-        qreal remarksTop = tableTop + 60;
-        QString remarksText = textEdit ? textEdit->toPlainText() : "";
-        if (!remarksText.isEmpty()) {
-            QRectF remarksRect(tableLeft, remarksTop, tableWidth, 100);
-            painter.drawText(remarksRect, Qt::AlignTop | Qt::TextWordWrap, remarksText);
+        for (int col = 0; col < columnCount; ++col) {
+            QRectF cellRect(currentX, currentY, columnWidths[col], rowHeight);
+            painter.drawRect(cellRect);
+            QModelIndex index = model->index(row, col);
+            QString cellText = model->data(index).toString();
+            // 绘制单元格文本，确保中文正常显示并自动换行
+            painter.drawText(cellRect, Qt::AlignCenter | Qt::TextWordWrap, cellText);
+            currentX += columnWidths[col];
         }
+    }
+    
+    // 添加调试信息
+    qDebug() << "Form_page3 PDF生成完成 - 使用的设置：";
+    qDebug() << "页面尺寸: " << pageWidth << "x" << pageHeight;
+    qDebug() << "字体: " << font.family() << ", 大小: " << font.pointSize();
+    qDebug() << "表格设置 - 表头高度: " << headerHeight << ", 数据行高度: " << rowHeight;
+    qDebug() << "表格总高度: " << tableHeight;
+    
+    // 3. 绘制备注内容
+    // 增加备注与表格之间的间距，确保空一行
+    qreal remarksTop = tableTop + tableHeight + 50;
+    if (!remarks.isEmpty()) {
+        // 计算文本所需的高度
+        QFontMetrics fontMetrics(font);
+        QStringList lines = remarks.split('\n');
+        qreal totalHeight = 0;
+        qreal maxWidth = tableWidth;
+
+        // 根据用户要求，将备注每行的行高设置为固定值100
+        qreal lineHeight = 100;
+        
+        // 计算每行可以显示的汉字数量，确保与当前Qt版本兼容
+        int charsPerLine = 20; // 默认值
+        
+        // 使用fontMetrics计算一个汉字的宽度
+        qreal avgCharWidth = 0;
+        // 先尝试使用width方法（更广泛兼容的Qt版本）
+        avgCharWidth = fontMetrics.width("中");
+        
+        if (avgCharWidth > 0 && maxWidth > 0) {
+            // 计算可显示的汉字数量，留10%的边距
+            charsPerLine = static_cast<int>((maxWidth * 0.9) / avgCharWidth);
+            // 确保结果在合理范围内
+            charsPerLine = qMax(10, qMin(50, charsPerLine));
+        }
+        
+        qDebug() << "修正后每行可以显示的汉字数量:" << charsPerLine;
+        for (const QString &line : lines) {
+            // 方法1：使用QFontMetrics计算文本在指定宽度下需要的行数
+            QRect textRect = fontMetrics.boundingRect(0, 0, static_cast<int>(maxWidth), 1000, Qt::TextWordWrap, line);
+            int linesFromMetrics = (textRect.height() + lineHeight - 1) / lineHeight; // 向上取整
+            
+            // 方法2：根据汉字数量计算需要的行数（中文通常占2个字符宽度）
+            int totalChars = line.length();
+            qDebug()<<"totalChars:"<<totalChars;
+            int linesFromCharCount = (totalChars + charsPerLine - 1) / charsPerLine; // 向上取整
+            qDebug()<<"linesFromCharCount:"<<linesFromCharCount;
+            // 取两种方法计算结果的较大值，确保有足够的空间
+            int linesNeeded = qMax(linesFromMetrics, linesFromCharCount);
+            qDebug()<<"linesNeeded:"<<linesNeeded;
+            
+            totalHeight += linesNeeded * lineHeight;
+        }
+
+        // 为备注区域增加额外的20%高度，确保最后一行完全显示
+        totalHeight *= 1.2;
+        qDebug()<<"totalHEight:"<<totalHeight;
+        
+        // 绘制备注内容 - 使用动态计算的高度值，确保多行文字完全显示
+        painter.drawText(QRectF(tableLeft, remarksTop, maxWidth, totalHeight), Qt::AlignTop | Qt::TextWordWrap, remarks);
     }
 
     // 完成绘制
@@ -1010,12 +1044,46 @@ void PDFGenerator::managePDFReport(const QString &defaultFileName,
 }
 
 // 生成临时PDF文件，预览并询问是否保存（用于Form_page3）
-void PDFGenerator::generateAndManageFormPage3PDF(QWidget *parent)
+
+void PDFGenerator::generateAndManageFormPage3PDF(const QString &title, QAbstractItemModel *model, const QString &remarks)
 {
     qDebug() << "开始生成Form_page3的PDF报告";
     
-    // 调用通用管理函数，传入默认文件名和生成函数
-    managePDFReport("form_page3.pdf", 
-                  [parent](const QString &fileName) { return generateFormPage3PDF(fileName, parent); }, 
-                  parent);
+    // 尝试从父窗口获取所需数据
+//    QString title = "检验结果报告"; // 默认标题
+//    QAbstractItemModel *model = nullptr;
+//    QString remarks = "";
+    
+    // 这里假设可以从父窗口中获取表格视图和文本编辑框
+    // 实际实现应根据应用程序的具体UI结构调整
+//    if (parent) {
+//        // 从父窗口查找标题标签
+//        QLabel *titleLabel = parent->findChild<QLabel*>("titleLabel");
+//        if (titleLabel && !titleLabel->text().isEmpty()) {
+//            title = titleLabel->text();
+//        }
+        
+//        // 从父窗口查找表格视图
+//        QTableView *tableView = parent->findChild<QTableView*>("tableView");
+//        if (tableView && tableView->model()) {
+//            model = tableView->model();
+//        }
+        
+//        // 从父窗口查找备注文本框
+//        QTextEdit *textEdit = parent->findChild<QTextEdit*>("textEdit");
+//        if (textEdit && !textEdit->toPlainText().isEmpty()) {
+//            remarks = textEdit->toPlainText();
+//        }
+//    }
+    
+    // 检查是否获取到了必要的模型数据
+    if (!model) {
+        qWarning("无法获取表格模型数据，无法生成PDF");
+        return;
+    }
+    
+    // 使用managePDFReport函数处理PDF生成、预览和保存逻辑
+    managePDFReport("检验结果报告.pdf", [=](const QString &fileName) {
+        return generateFormPage3PDF(title, model, remarks, fileName);
+    }, nullptr);
 }

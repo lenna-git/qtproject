@@ -6,6 +6,7 @@
 #include <QWidget>
 #include <QStringList>
 #include <functional>
+#include<QStandardItemModel>
 
 // 定义ReportContent结构体，用于存储可变动的报告内容
 typedef struct {
@@ -49,7 +50,7 @@ static bool generateReportPDFWithProjects(const QString &fileName, const ReportC
 static bool generateTablePDF(const QString &fileName, QWidget *parent = nullptr);
 
 // 为Form_page3生成PDF报告
-static bool generateFormPage3PDF(const QString &fileName, QWidget *parent = nullptr);
+static bool generateFormPage3PDF(const QString &title, QAbstractItemModel *model, const QString &remarks, const QString &fileName = "");
 
 
 
@@ -63,7 +64,7 @@ static void generateAndManageReportPDFWith6Projects(const ReportContent &content
 static void generateAndManageTablePDF(QWidget *parent = nullptr);
 
     // 生成临时PDF文件，预览并询问是否保存（用于Form_page3）
-    static void generateAndManageFormPage3PDF(QWidget *parent = nullptr);
+    static void generateAndManageFormPage3PDF(const QString &title, QAbstractItemModel *model, const QString &remarks);
 
 signals:
     
