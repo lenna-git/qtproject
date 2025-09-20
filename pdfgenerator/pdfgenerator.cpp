@@ -777,17 +777,66 @@ bool PDFGenerator::generateFormPage3PDF(const QString &title, QAbstractItemModel
     font.setPointSize(7); // 确保数据行使用正确的字体大小
     painter.setFont(font);
     
+    // 检测需要合并的单元格（从索引1开始，跳过序号列）
+    QVector<QVector<int>> mergedCells(rowCount, QVector<int>(columnCount, 1)); // 记录每个单元格需要合并的行数
+    
+    for (int col = 1; col < columnCount; ++col) {
+        if (rowCount <= 1) continue;
+        
+        int startRow = 0;
+        QVariant startValue = model->data(model->index(startRow, col), Qt::DisplayRole);
+        
+        for (int currentRow = 1; currentRow < rowCount; ++currentRow) {
+            QVariant currentValue = model->data(model->index(currentRow, col), Qt::DisplayRole);
+            
+            // 如果当前单元格的值与起始单元格的值不同，或者到达最后一行
+            if (currentValue != startValue || currentRow == rowCount - 1) {
+                int span = currentValue != startValue ? currentRow - startRow : currentRow - startRow + 1;
+                
+                // 如果有两个或更多相同值的单元格，标记为合并
+                if (span > 1) {
+                    mergedCells[startRow][col] = span;
+                    // 标记被合并的单元格为0，表示不需要绘制
+                    for (int i = startRow + 1; i < startRow + span; ++i) {
+                        mergedCells[i][col] = 0;
+                    }
+                }
+                
+                // 更新起始行和起始值
+                startRow = currentRow;
+                if (currentValue != startValue) {
+                    startValue = currentValue;
+                }
+            }
+        }
+    }
+    
+    // 绘制数据行，处理单元格合并
     for (int row = 0; row < rowCount; ++row) {
         currentX = tableLeft;
         qreal currentY = tableTop + headerHeight + row * rowHeight;
         
         for (int col = 0; col < columnCount; ++col) {
-            QRectF cellRect(currentX, currentY, columnWidths[col], rowHeight);
+            int rowspan = mergedCells[row][col];
+            
+            // 如果当前单元格是被合并的单元格，则跳过
+            if (rowspan == 0) {
+                currentX += columnWidths[col];
+                continue;
+            }
+            
+            // 计算单元格的实际高度
+            qreal cellHeight = rowspan * rowHeight;
+            QRectF cellRect(currentX, currentY, columnWidths[col], cellHeight);
+            
+            // 绘制单元格边框
             painter.drawRect(cellRect);
+            
+            // 绘制单元格文本，确保中文正常显示并自动换行
             QModelIndex index = model->index(row, col);
             QString cellText = model->data(index).toString();
-            // 绘制单元格文本，确保中文正常显示并自动换行
             painter.drawText(cellRect, Qt::AlignCenter | Qt::TextWordWrap, cellText);
+            
             currentX += columnWidths[col];
         }
     }
@@ -1049,34 +1098,7 @@ void PDFGenerator::managePDFReport(const QString &defaultFileName,
 void PDFGenerator::generateAndManageFormPage3PDF(const QString &title, QAbstractItemModel *model, const QString &remarks)
 {
     qDebug() << "开始生成Form_page3的PDF报告";
-    
-    // 尝试从父窗口获取所需数据
-//    QString title = "检验结果报告"; // 默认标题
-//    QAbstractItemModel *model = nullptr;
-//    QString remarks = "";
-    
-    // 这里假设可以从父窗口中获取表格视图和文本编辑框
-    // 实际实现应根据应用程序的具体UI结构调整
-//    if (parent) {
-//        // 从父窗口查找标题标签
-//        QLabel *titleLabel = parent->findChild<QLabel*>("titleLabel");
-//        if (titleLabel && !titleLabel->text().isEmpty()) {
-//            title = titleLabel->text();
-//        }
         
-//        // 从父窗口查找表格视图
-//        QTableView *tableView = parent->findChild<QTableView*>("tableView");
-//        if (tableView && tableView->model()) {
-//            model = tableView->model();
-//        }
-        
-//        // 从父窗口查找备注文本框
-//        QTextEdit *textEdit = parent->findChild<QTextEdit*>("textEdit");
-//        if (textEdit && !textEdit->toPlainText().isEmpty()) {
-//            remarks = textEdit->toPlainText();
-//        }
-//    }
-    
     // 检查是否获取到了必要的模型数据
     if (!model) {
         qWarning("无法获取表格模型数据，无法生成PDF");
@@ -1134,7 +1156,6 @@ bool PDFGenerator::generateFormPage3PDFWithDataList(const QString &title, const 
     }
     
     // 调用现有的generateFormPage3PDF函数生成PDF
-//    bool result = generateFormPage3PDF(title, model, remarks, fileName);
     generateAndManageFormPage3PDF(title, model, remarks);
     
     // 清理临时创建的model
