@@ -32,8 +32,9 @@ Form_page3::Form_page3(QWidget *parent) :
                 "备注：空手道解放涉及多方了解实际发生经典服饰开始阶段了封建士大夫精神的"
                           "空手道解放涉及多方了解实际发生经典服饰开始阶段了封建士大夫精神的"
                           "空手道解放涉及多方了解实际发生经典服饰开始阶段了封建士大夫精神的"
+                          "\n"
                           "123空手道解放涉及多方了解实际发生经典服饰开始阶段了封建士大夫精神的"
-                          "456空手道解放涉及多方了解实际发生经典服饰开始阶段了封建士大夫精神的"
+                          "456空手道解放涉及多方了解实际发生经典服饰开始阶段了封建士大夫精神的结束"
                 );
 
     paintTable_all();
@@ -58,8 +59,19 @@ void Form_page3::paintTable_all()
     // 初始化表头 - 添加序号列和第四个表头名称
     mHeader<< "序号"<<"检验项目"<<"检验结果"<<"算法检验结果"<<"备注"<<"备注2";
     
-    // 初始化数据列表
+    // 初始化数据列表，请初始化100个数据
     QStringList values1, values2, values3, values4, values5, values6, values7, values8, values9;
+    QStringList values10, values11, values12, values13, values14, values15, values16, values17, values18, values19;
+    QStringList values20, values21, values22, values23, values24, values25, values26, values27, values28, values29;
+    QStringList values30, values31, values32, values33, values34, values35, values36, values37, values38, values39, values40;
+    QStringList values41, values42, values43, values44, values45, values46, values47, values48, values49, values50;
+    QStringList values51, values52, values53, values54, values55, values56, values57, values58, values59, values60;
+    QStringList values61, values62, values63, values64, values65, values66, values67, values68, values69, values70;
+    QStringList values71, values72, values73, values74, values75, values76, values77, values78, values79, values80;
+    QStringList values81, values82, values83, values84, values85, values86, values87, values88, values89, values90;
+    QStringList values91, values92, values93, values94, values95, values96, values97, values98, values99, values100;
+    
+    // 前9组数据保留原有内容
     values1 << "1"<<"检验项目一" << "通过" << "未完全校验" << "ceshi1"<< "ceshi2_1";
     values2 << "2"<<"检验项目2" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2";
     values3 << "3"<<"检验项目3" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2";
@@ -70,6 +82,116 @@ void Form_page3::paintTable_all()
     values8 << "8"<<"检验项目8" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2";
     values9 << "9"<<"检验项目9" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2";
     
+    // 10-19组数据
+    values10 << "10"<<"检验项目10" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2";
+    values11 << "11"<<"检验项目11" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2_1";
+    values12 << "12"<<"检验项目12" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2";
+    values13 << "13"<<"检验项目13" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2";
+    values14 << "14"<<"检验项目14" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2";
+    values15 << "15"<<"检验项目15" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2_1";
+    values16 << "16"<<"检验项目16" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2";
+    values17 << "17"<<"检验项目17" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2";
+    values18 << "18"<<"检验项目18" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2";
+    values19 << "19"<<"检验项目19" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2_1";
+    
+    // 20-29组数据
+    values20 << "20"<<"检验项目20" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2";
+    values21 << "21"<<"检验项目21" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2";
+    values22 << "22"<<"检验项目22" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2";
+    values23 << "23"<<"检验项目23" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2_1";
+    values24 << "24"<<"检验项目24" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2";
+    values25 << "25"<<"检验项目25" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2";
+    values26 << "26"<<"检验项目26" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2";
+    values27 << "27"<<"检验项目27" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2_1";
+    values28 << "28"<<"检验项目28" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2";
+    values29 << "29"<<"检验项目29" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2";
+    
+    // 30-40组数据
+    values30 << "30"<<"检验项目30" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2";
+    values31 << "31"<<"检验项目31" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2_1";
+    values32 << "32"<<"检验项目32" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2";
+    values33 << "33"<<"检验项目33" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2";
+    values34 << "34"<<"检验项目34" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2";
+    values35 << "35"<<"检验项目35" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2_1";
+    values36 << "36"<<"检验项目36" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2";
+    values37 << "37"<<"检验项目37" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2";
+    values38 << "38"<<"检验项目38" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2";
+    values39 << "39"<<"检验项目39" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2_1";
+    values40 << "40"<<"检验项目40" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2";
+    
+    // 41-50组数据
+    values41 << "41"<<"检验项目41" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2_1";
+    values42 << "42"<<"检验项目42" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2";
+    values43 << "43"<<"检验项目43" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2";
+    values44 << "44"<<"检验项目44" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2";
+    values45 << "45"<<"检验项目45" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2_1";
+    values46 << "46"<<"检验项目46" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2";
+    values47 << "47"<<"检验项目47" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2";
+    values48 << "48"<<"检验项目48" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2";
+    values49 << "49"<<"检验项目49" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2_1";
+    values50 << "50"<<"检验项目50" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2";
+    
+    // 51-60组数据
+    values51 << "51"<<"检验项目51" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2";
+    values52 << "52"<<"检验项目52" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2";
+    values53 << "53"<<"检验项目53" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2_1";
+    values54 << "54"<<"检验项目54" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2";
+    values55 << "55"<<"检验项目55" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2";
+    values56 << "56"<<"检验项目56" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2";
+    values57 << "57"<<"检验项目57" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2_1";
+    values58 << "58"<<"检验项目58" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2";
+    values59 << "59"<<"检验项目59" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2";
+    values60 << "60"<<"检验项目60" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2";
+    
+    // 61-70组数据
+    values61 << "61"<<"检验项目61" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2_1";
+    values62 << "62"<<"检验项目62" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2";
+    values63 << "63"<<"检验项目63" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2";
+    values64 << "64"<<"检验项目64" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2";
+    values65 << "65"<<"检验项目65" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2_1";
+    values66 << "66"<<"检验项目66" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2";
+    values67 << "67"<<"检验项目67" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2";
+    values68 << "68"<<"检验项目68" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2";
+    values69 << "69"<<"检验项目69" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2_1";
+    values70 << "70"<<"检验项目70" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2";
+    
+    // 71-80组数据
+    values71 << "71"<<"检验项目71" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2";
+    values72 << "72"<<"检验项目72" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2";
+    values73 << "73"<<"检验项目73" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2_1";
+    values74 << "74"<<"检验项目74" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2";
+    values75 << "75"<<"检验项目75" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2";
+    values76 << "76"<<"检验项目76" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2";
+    values77 << "77"<<"检验项目77" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2_1";
+    values78 << "78"<<"检验项目78" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2";
+    values79 << "79"<<"检验项目79" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2";
+    values80 << "80"<<"检验项目80" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2";
+    
+    // 81-90组数据
+    values81 << "81"<<"检验项目81" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2_1";
+    values82 << "82"<<"检验项目82" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2";
+    values83 << "83"<<"检验项目83" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2";
+    values84 << "84"<<"检验项目84" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2";
+    values85 << "85"<<"检验项目85" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2_1";
+    values86 << "86"<<"检验项目86" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2";
+    values87 << "87"<<"检验项目87" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2";
+    values88 << "88"<<"检验项目88" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2";
+    values89 << "89"<<"检验项目89" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2_1";
+    values90 << "90"<<"检验项目90" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2";
+    
+    // 91-100组数据
+    values91 << "91"<<"检验项目91" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2";
+    values92 << "92"<<"检验项目92" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2";
+    values93 << "93"<<"检验项目93" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2_1";
+    values94 << "94"<<"检验项目94" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2";
+    values95 << "95"<<"检验项目95" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2";
+    values96 << "96"<<"检验项目96" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2";
+    values97 << "97"<<"检验项目97" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2_1";
+    values98 << "98"<<"检验项目98" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2";
+    values99 << "99"<<"检验项目99" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2";
+    values100 << "100"<<"检验项目100" << "未校验" << "未完全校验" << "ceshi1"<< "ceshi2";
+    
+    // 将所有100组数据添加到datalist中
     datalist << new stream_result_all_data(values1)
              << new stream_result_all_data(values2)
              << new stream_result_all_data(values3)
@@ -78,7 +200,98 @@ void Form_page3::paintTable_all()
              << new stream_result_all_data(values6)
              << new stream_result_all_data(values7)
              << new stream_result_all_data(values8)
-             << new stream_result_all_data(values9);
+             << new stream_result_all_data(values9)
+             << new stream_result_all_data(values10)
+             << new stream_result_all_data(values11)
+             << new stream_result_all_data(values12)
+             << new stream_result_all_data(values13)
+             << new stream_result_all_data(values14)
+             << new stream_result_all_data(values15)
+             << new stream_result_all_data(values16)
+             << new stream_result_all_data(values17)
+             << new stream_result_all_data(values18)
+             << new stream_result_all_data(values19)
+             << new stream_result_all_data(values20)
+             << new stream_result_all_data(values21)
+             << new stream_result_all_data(values22)
+             << new stream_result_all_data(values23)
+             << new stream_result_all_data(values24)
+             << new stream_result_all_data(values25)
+             << new stream_result_all_data(values26)
+             << new stream_result_all_data(values27)
+             << new stream_result_all_data(values28)
+             << new stream_result_all_data(values29)
+             << new stream_result_all_data(values30)
+             << new stream_result_all_data(values31)
+             << new stream_result_all_data(values32)
+             << new stream_result_all_data(values33)
+             << new stream_result_all_data(values34)
+             << new stream_result_all_data(values35)
+             << new stream_result_all_data(values36)
+             << new stream_result_all_data(values37)
+             << new stream_result_all_data(values38)
+             << new stream_result_all_data(values39)
+             << new stream_result_all_data(values40)
+             << new stream_result_all_data(values41)
+             << new stream_result_all_data(values42)
+             << new stream_result_all_data(values43)
+             << new stream_result_all_data(values44)
+             << new stream_result_all_data(values45)
+             << new stream_result_all_data(values46)
+             << new stream_result_all_data(values47)
+             << new stream_result_all_data(values48)
+             << new stream_result_all_data(values49)
+             << new stream_result_all_data(values50)
+             << new stream_result_all_data(values51)
+             << new stream_result_all_data(values52)
+             << new stream_result_all_data(values53)
+             << new stream_result_all_data(values54)
+             << new stream_result_all_data(values55)
+             << new stream_result_all_data(values56)
+             << new stream_result_all_data(values57)
+             << new stream_result_all_data(values58)
+             << new stream_result_all_data(values59)
+             << new stream_result_all_data(values60)
+             << new stream_result_all_data(values61)
+             << new stream_result_all_data(values62)
+             << new stream_result_all_data(values63)
+             << new stream_result_all_data(values64)
+             << new stream_result_all_data(values65)
+             << new stream_result_all_data(values66)
+             << new stream_result_all_data(values67)
+             << new stream_result_all_data(values68)
+             << new stream_result_all_data(values69)
+             << new stream_result_all_data(values70)
+             << new stream_result_all_data(values71)
+             << new stream_result_all_data(values72)
+             << new stream_result_all_data(values73)
+             << new stream_result_all_data(values74)
+             << new stream_result_all_data(values75)
+             << new stream_result_all_data(values76)
+             << new stream_result_all_data(values77)
+             << new stream_result_all_data(values78)
+             << new stream_result_all_data(values79)
+             << new stream_result_all_data(values80)
+             << new stream_result_all_data(values81)
+             << new stream_result_all_data(values82)
+             << new stream_result_all_data(values83)
+             << new stream_result_all_data(values84)
+             << new stream_result_all_data(values85)
+             << new stream_result_all_data(values86)
+             << new stream_result_all_data(values87)
+             << new stream_result_all_data(values88)
+             << new stream_result_all_data(values89)
+             << new stream_result_all_data(values90)
+             << new stream_result_all_data(values91)
+             << new stream_result_all_data(values92)
+             << new stream_result_all_data(values93)
+             << new stream_result_all_data(values94)
+             << new stream_result_all_data(values95)
+             << new stream_result_all_data(values96)
+             << new stream_result_all_data(values97)
+             << new stream_result_all_data(values98)
+             << new stream_result_all_data(values99)
+             << new stream_result_all_data(values100);
     
     // 使用TableGenerator生成表格数据 - 使用增强版方法动态生成行列，并自动合并相同内容单元格
     mTableGenerator->generateTable(mTableViewModel, ui->tableView, mHeader, datalist);

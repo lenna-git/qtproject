@@ -6,7 +6,10 @@
 #include <QWidget>
 #include <QStringList>
 #include <functional>
-#include<QStandardItemModel>
+#include <QStandardItemModel>
+#include <QTextLayout>
+#include <QTextLine>
+#include <QTextDocument>
 #include "../chkresultclass/stream_result_all_data.h"
 
 // 定义ReportContent结构体，用于存储可变动的报告内容
