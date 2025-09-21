@@ -379,8 +379,29 @@ void Form_page3::on_pushButton_3_clicked()
             list1<<singleItem;
         }
         itemResult->setDataList(list1);
-        // 设置备注
-        itemResult->setRemark(QString("这是第 %1 个检验结果集的备注信息").arg(i+1));
+        // 设置多行且字数超过1000字的备注
+        QString longRemark = QString("这是第 %1 个检验结果集的详细备注信息\n").arg(i+1);
+        longRemark += "本检验结果集包含了全面的分析数据，涵盖了从检验前准备到检验完成的全部过程。\n";
+        longRemark += "检验前准备工作包括：设备校准、环境条件检查、样品预处理等多个环节，确保检验结果的准确性和可靠性。\n";
+        longRemark += "检验过程中严格按照标准操作流程执行，每个环节都有详细的记录和质量控制措施。\n";
+        longRemark += "数据分析采用了先进的统计方法和专业软件，对原始数据进行了全面的处理和验证。\n";
+        longRemark += "结果评估依据相关标准和规范进行，综合考虑了多种因素的影响。\n";
+        longRemark += QString("检验结果集 %1 特别关注了以下几个方面：\n").arg(i+1);
+        longRemark += "1. 检验项目的完整性和覆盖范围\n";
+        longRemark += "2. 检验数据的准确性和一致性\n";
+        longRemark += "3. 异常值的识别和处理\n";
+        longRemark += "4. 检验结果的重复性和再现性\n";
+        longRemark += "5. 与历史数据的对比分析\n";
+        
+        // 生成更多文本以确保超过1000字
+        for (int k = 0; k < 15; k++) {
+            longRemark += QString("扩展备注内容 %1-%2：这是一段用于填充备注长度的示例文本，包含了多个方面的信息。通过提供详细的背景信息、检验过程描述和结果分析，可以帮助使用者更好地理解检验数据的含义和价值。\n").arg(i+1).arg(k+1);
+        }
+        
+        longRemark += QString("检验结果集 %1 的结论部分总结了主要发现和建议措施，为后续工作提供了重要参考。\n").arg(i+1);
+        longRemark += "备注信息结束。";
+        
+        itemResult->setRemark(longRemark);
         
         // 添加到列表
         itemsResultList<<itemResult;
