@@ -3,7 +3,7 @@
 #include<QString>
 #include<QStringList>
 
-
+//单个检查结果，主要用于画表格，一个实例化的数据为一行表格的内容
 class chk_singleitem_result
 {
 public:

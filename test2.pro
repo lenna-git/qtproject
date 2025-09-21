@@ -34,6 +34,7 @@ SOURCES += \
     pdfgenerator/pdfgenerator.cpp \
     form_page3.cpp \
     chkresultclass/chk_singleitem_result.cpp \
+    chkresultclass/chk_items_result.cpp \
     tablegenerator/tablegenerator.cpp
 
 HEADERS += \
@@ -43,6 +44,7 @@ HEADERS += \
     pdfgenerator/pdfgenerator.h \
     form_page3.h \
     chkresultclass/chk_singleitem_result.h \
+    chkresultclass/chk_items_result.h \
     tablegenerator/tablegenerator.h
 
 FORMS += \

@@ -6,7 +6,10 @@
 #include<QFileDialog>
 #include<QMessageBox>
 #include<QDebug>
+#include<QList>
+#include<QThread>
 #include "pdfgenerator/pdfgenerator.h"
+#include "chkresultclass/chk_items_result.h"
 
 Form_page3::Form_page3(QWidget *parent) :
     QWidget(parent),
@@ -333,4 +336,63 @@ void Form_page3::on_pushButton_2_clicked()
 void Form_page3::on_pushButton_3_clicked()
 {
     qDebug()<<"on_pushButton_3_clicked";
+
+    // 初始化一个size为3的QList<chk_items_result>
+    QList<chk_items_result *> itemsResultList;
+    
+    // 为每个chk_items_result对象设置实际值
+    for(int i = 0; i < 3; i++){
+        chk_items_result *itemResult = new chk_items_result();
+        
+        // 设置标题
+        itemResult->setTitle(QString("检验结果集 %1").arg(i+1));
+        
+        // 创建并设置表头
+        QStringList header;
+        header << "序号" << "检验项目" << "检验结果" << "备注";
+        itemResult->setTableHeader(header);
+        
+        QList<chk_singleitem_result *> list1 ;
+        // 为每个结果集创建2个示例数据项
+        for(int j = 0; j < 2; j++){
+            // 创建字段值列表 - 确保与header元素数量一致（4个元素）
+            QStringList fieldValues;
+            // 为每个字段设置实际的初始化值
+            fieldValues << QString("%1").arg(j+1)                 // 序号：实际的数字序号
+                        << QString("检验项目 %1-%2").arg(i+1).arg(j+1)  // 检验项目：具体的项目名称
+                        << (j % 2 == 0 ? "通过" : "未通过")           // 检验结果：通过或未通过的实际状态
+                        << QString("示例备注 %1-%2").arg(i+1).arg(j+1);  // 备注：具体的备注信息
+            
+            // 创建字段名列表 - 与header保持一致
+            QStringList fieldNames;
+            fieldNames << "序号" << "检验项目" << "检验结果" << "备注";
+            
+            // 验证字段值数量与表头数量一致
+            if(fieldValues.size() != header.size()) {
+                qDebug() << QString("警告：结果集 %1 的数据项 %2 字段值数量(%3)与表头数量(%4)不一致！").
+                            arg(i+1).arg(j+1).arg(fieldValues.size()).arg(header.size());
+            }
+            
+            // 创建并初始化chk_singleitem_result对象，使用字段名和字段值
+            chk_singleitem_result *singleItem = new chk_singleitem_result(fieldValues);
+
+            list1<<singleItem;
+        }
+        itemResult->setDataList(list1);
+        // 设置备注
+        itemResult->setRemark(QString("这是第 %1 个检验结果集的备注信息").arg(i+1));
+        
+        // 添加到列表
+        itemsResultList<<itemResult;
+    }
+    
+    qDebug() << "初始化的QList<chk_items_result>大小: " << itemsResultList.size();
+    
+    chk_items_result *test = itemsResultList.at(1);
+
+    PDFGenerator::generateFormPage3PDFWithDataList(test->getTitle(),
+                                                                test->getDataList(),
+                                                                test->getTableHeader(),
+                                                                test->getRemark());
+    qDebug() << "on_pushButton_3_clicked函数执行完毕";
 }
