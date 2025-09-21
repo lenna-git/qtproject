@@ -25,6 +25,7 @@
 #include <QTextDocument>
 #include<QStandardItemModel>
 #include "../chkresultclass/chk_singleitem_result.h"
+#include "../chkresultclass/chk_items_result.h"
 
 
 PDFGenerator::PDFGenerator(QObject *parent) : QObject(parent)
@@ -1244,6 +1245,21 @@ void PDFGenerator::generateAndManagePDFwithTableModel(const QString &title, QAbs
     }, nullptr);
 }
 
+// 生成多页PDF文件，预览并询问是否保存
+void PDFGenerator::generateAndManageMultiPagePDFWithItemsResultList(const QList<chk_items_result *> &itemsResultList)
+{
+    // 检查itemsResultList是否为空
+    if (itemsResultList.isEmpty()) {
+        qWarning("itemsResultList为空，无法生成PDF报告");
+        return;
+    }
+    
+    // 调用managePDFReport函数来管理PDF报告的生成、预览和保存
+    managePDFReport("多页检验结果报告.pdf", [=](const QString &fileName) {
+        return generateMultiPagePDFWithItemsResultList(itemsResultList, fileName);
+    }, nullptr);
+}
+
 // 新函数：根据标题、datalist、表头和备注生成PDF，自动转换datalist为model，然后生成pdf
 bool PDFGenerator::generateSinglePDFWithDataList(const QString &title, const QList<chk_singleitem_result *> &dataList, const QStringList &mheader, const QString &remarks, const QString &fileName)
 {
@@ -1301,5 +1317,240 @@ bool PDFGenerator::generateSinglePDFWithDataList(const QString &title, const QLi
     // 清理临时创建的model
     delete model;
     
+    return true;
+}
+
+// 新函数：根据chk_items_result列表生成多页PDF报告
+bool PDFGenerator::generateMultiPagePDFWithItemsResultList(const QList<chk_items_result *> &itemsResultList, const QString &fileName)
+{
+    // 确保itemsResultList不为空
+    if (itemsResultList.isEmpty()) {
+        qWarning("itemsResultList为空，无法生成PDF报告");
+        return false;
+    }
+    
+    // 如果没有提供fileName参数，则显示保存对话框让用户选择
+    QString outputFileName;
+    if (fileName.isEmpty()) {
+        outputFileName = QFileDialog::getSaveFileName(nullptr, "保存PDF文件", QDir::homePath(), "PDF文件 (*.pdf)");
+        if (outputFileName.isEmpty()) {
+            return false; // 用户取消保存
+        }
+    } else {
+        outputFileName = fileName; // 使用传入的文件名
+    }
+    
+    // 创建QPrinter对象并配置为PDF输出
+    QPrinter printer(QPrinter::HighResolution);
+    printer.setOutputFormat(QPrinter::PdfFormat);
+    printer.setOutputFileName(outputFileName);
+    
+    // 设置页面属性
+    printer.setPageSize(QPrinter::A4);  // 设置A4纸张
+    printer.setOrientation(QPrinter::Portrait);  // 纵向
+    printer.setFullPage(false);  // 不全页打印
+    
+    // 设置边距
+    printer.setPageMargins(20, 20, 20, 20, QPrinter::Millimeter);
+    
+    // 创建QPainter对象用于绘制PDF内容
+    QPainter painter;
+    if (!painter.begin(&printer)) {
+        qWarning("无法创建PDF文件");
+        return false;
+    }
+    
+    // 处理每个chk_items_result对象
+    for (int i = 0; i < itemsResultList.size(); ++i) {
+        const chk_items_result *itemResult = itemsResultList.at(i);
+        
+        // 如果不是第一个结果集，创建新页面
+        if (i > 0) {
+            printer.newPage();
+        }
+        
+        // 创建QStandardItemModel来存储当前结果集的数据
+        QStandardItemModel *model = new QStandardItemModel();
+        
+        // 获取当前结果集的标题、数据列表、表头和备注
+        QString title = itemResult->getTitle();
+        QList<chk_singleitem_result *> dataList = itemResult->getDataList();
+        QStringList headers = itemResult->getTableHeader();
+        QString remarks = itemResult->getRemark();
+        
+        // 检查数据列表是否为空
+        if (dataList.isEmpty()) {
+            qWarning() << "数据列表为空，跳过结果集: " << title;
+            delete model;
+            continue;
+        }
+        
+        // 设置表头
+        model->setHorizontalHeaderLabels(headers);
+        
+        // 填充表格数据
+        for (int row = 0; row < dataList.size(); ++row) {
+            const chk_singleitem_result *data = dataList.at(row);
+            for (int col = 0; col < qMin(data->fieldCount(), headers.size()); ++col) {
+                QString value = data->getField(col);
+                QStandardItem *item = new QStandardItem(value);
+                item->setTextAlignment(Qt::AlignCenter);
+                model->setItem(row, col, item);
+            }
+        }
+        
+        // 获取页面的可打印区域
+        QRectF printableRect = printer.pageRect(QPrinter::DevicePixel);
+        qreal pageWidth = printableRect.width();
+        qreal pageHeight = printableRect.height();
+        
+        // 调用generateSinglePDFwithTableModel函数的核心逻辑来绘制当前结果集
+        // 这里我们需要直接调用核心绘图逻辑，而不是整个函数，因为我们已经有了painter对象
+        
+        // 设置字体
+        QFont font;
+        QStringList chineseFonts = {"SimHei", "WenQuanYi Micro Hei", "Heiti TC", "Arial Unicode MS", "Microsoft YaHei", "NSimSun", "FangSong", "KaiTi", "STSong"};
+        QString selectedFont;
+        
+        // 检查系统中可用的中文字体
+        QFontDatabase fontDatabase;
+        foreach (const QString &fontFamily, chineseFonts) {
+            if (fontDatabase.hasFamily(fontFamily)) {
+                selectedFont = fontFamily;
+                break;
+            }
+        }
+        
+        // 如果没有找到指定的中文字体，使用默认字体
+        if (selectedFont.isEmpty()) {
+            selectedFont = "SimHei";
+        }
+        
+        font.setFamily(selectedFont);
+        font.setStyleStrategy(QFont::PreferAntialias); // 启用抗锯齿
+        painter.setFont(font);
+        
+        // 1. 绘制标题
+        QString titleText = title.isEmpty() ? "检验结果报告" : title;
+        // 保存当前字体设置
+        QFont originalFont = font;
+        // 临时设置标题字体
+        font.setPointSize(16);
+        font.setBold(true);
+        painter.setFont(font);
+        // 绘制标题
+        painter.drawText(QRectF(0, 20, pageWidth, 300), Qt::AlignCenter, titleText);
+        // 恢复原始字体设置
+        font = originalFont;
+        painter.setFont(font);
+        
+        // 2. 绘制表格内容 - 直接调用generateSinglePDFwithTableModel的表格绘制逻辑
+        qreal tableTop = 400; // 表格起始位置
+        qreal tableLeft = 30; // 增加左边距
+        qreal tableWidth = pageWidth - 60; // 减小表格宽度，增加页边距
+        
+        int rowCount = model->rowCount();
+        int columnCount = model->columnCount();
+        
+        // 计算行高和列宽
+        qreal headerHeight = 200; // 表头高度
+        qreal rowHeight = 200; // 数据行高度
+        
+        // 使用均匀分布的列宽
+        QVector<qreal> columnWidths;
+        qreal uniformWidth = tableWidth / columnCount;
+        for (int col = 0; col < columnCount; ++col) {
+            columnWidths.append(uniformWidth);
+        }
+        
+        // 计算每页能显示的行数
+        qreal availableHeight = pageHeight - tableTop - 50;
+        int rowsPerPage = static_cast<int>(availableHeight / rowHeight);
+        if (rowsPerPage <= 0) {
+            rowsPerPage = 1;
+        }
+        
+        // 绘制数据行，处理分页和单元格合并
+        int currentPage = 0;
+        int rowsProcessed = 0;
+        qreal currentX = 0;
+        qreal currentTableTop = tableTop;
+        
+        // 用于分页处理
+        while (rowsProcessed < rowCount) {
+            // 计算当前页要显示的起始行和结束行
+            int startRow = rowsProcessed;
+            int endRow = qMin(startRow + rowsPerPage, rowCount);
+            
+            // 如果不是当前结果集的第一页，创建新页面
+            if (currentPage > 0) {
+                printer.newPage();
+                currentTableTop = 50; // 新页面上表格起始位置
+            }
+            
+            // 在当前页绘制表头
+            currentX = tableLeft;
+            qreal headerY = currentTableTop;
+            font.setBold(true);
+            font.setPointSize(7);
+            painter.setFont(font);
+            
+            for (int col = 0; col < columnCount; ++col) {
+                QRectF headerRect(currentX, headerY, columnWidths[col], headerHeight);
+                painter.drawRect(headerRect);
+                QString headerText = model->headerData(col, Qt::Horizontal).toString();
+                painter.drawText(headerRect, Qt::AlignCenter | Qt::TextWordWrap, headerText);
+                currentX += columnWidths[col];
+            }
+            
+            // 在当前页绘制数据行
+            font.setBold(false);
+            painter.setFont(font);
+            
+            for (int row = startRow; row < endRow; ++row) {
+                currentX = tableLeft;
+                qreal currentY = currentTableTop + headerHeight + (row - startRow) * rowHeight;
+                
+                for (int col = 0; col < columnCount; ++col) {
+                    QRectF cellRect(currentX, currentY, columnWidths[col], rowHeight);
+                    painter.drawRect(cellRect);
+                    
+                    QModelIndex index = model->index(row, col);
+                    QString cellText = model->data(index).toString();
+                    
+                    QRectF adjustedRect = cellRect.adjusted(4, 4, -4, -4);
+                    painter.drawText(adjustedRect, Qt::AlignCenter | Qt::TextWordWrap, cellText);
+                    
+                    currentX += columnWidths[col];
+                }
+            }
+            
+            // 显式绘制完整的表格外框
+            qreal tableBottom = currentTableTop + headerHeight + (endRow - startRow) * rowHeight;
+            QRectF tableRect(tableLeft, currentTableTop, tableWidth, tableBottom - currentTableTop);
+            painter.drawRect(tableRect);
+            
+            rowsProcessed = endRow;
+            currentPage++;
+        }
+        
+        // 3. 绘制备注内容
+        if (!remarks.isEmpty()) {
+            qreal remarksTop = currentTableTop + headerHeight + rowCount * rowHeight + 20;
+            qreal maxWidth = tableWidth;
+            
+            font.setBold(false);
+            painter.setFont(font);
+            
+            // 绘制备注内容
+            painter.drawText(QRectF(tableLeft, remarksTop, maxWidth, 500), Qt::AlignTop | Qt::TextWordWrap, remarks);
+        }
+        
+        // 清理临时创建的model
+        delete model;
+    }
+    
+    // 完成绘制
+    painter.end();
     return true;
 }

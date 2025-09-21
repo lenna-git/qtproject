@@ -13,6 +13,7 @@
 #include <QTextLine>
 #include <QTextDocument>
 #include "../chkresultclass/chk_singleitem_result.h"
+#include "../chkresultclass/chk_items_result.h"
 
 // 定义ReportContent结构体，用于存储可变动的报告内容
 typedef struct {
@@ -60,6 +61,12 @@ static bool generateSinglePDFwithTableModel(const QString &title, QAbstractItemM
 
 // 新函数：根据标题、datalist、表头和备注生成PDF，自动转换datalist为model
     static bool generateSinglePDFWithDataList(const QString &title, const QList<chk_singleitem_result *> &dataList, const QStringList &mheader, const QString &remarks, const QString &fileName = "");
+    
+    // 根据chk_items_result列表生成多页PDF报告
+    static bool generateMultiPagePDFWithItemsResultList(const QList<chk_items_result *> &itemsResultList, const QString &fileName = "");
+    
+    // 生成多页PDF文件，预览并询问是否保存
+    static void generateAndManageMultiPagePDFWithItemsResultList(const QList<chk_items_result *> &itemsResultList);
 
 // 生成临时PDF文件，预览并询问是否保存（用于Form_page1，接受自定义内容）
 static void generateAndManageReportPDF(const ReportContent &content, QWidget *parent = nullptr);

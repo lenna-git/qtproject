@@ -388,11 +388,8 @@ void Form_page3::on_pushButton_3_clicked()
     
     qDebug() << "初始化的QList<chk_items_result>大小: " << itemsResultList.size();
     
-    chk_items_result *test = itemsResultList.at(1);
+//    chk_items_result *test = itemsResultList.at(1);
 
-    PDFGenerator::generateSinglePDFWithDataList(test->getTitle(),
-                                                                test->getDataList(),
-                                                                test->getTableHeader(),
-                                                                test->getRemark());
+    PDFGenerator::generateAndManageMultiPagePDFWithItemsResultList(itemsResultList);
     qDebug() << "on_pushButton_3_clicked函数执行完毕";
 }
