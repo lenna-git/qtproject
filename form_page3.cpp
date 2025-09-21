@@ -323,7 +323,7 @@ void Form_page3::on_pushButton_2_clicked()
 
     
     // 调用PDFGenerator中的新方法，使用数据列表和表头直接生成PDF
-    bool result = PDFGenerator::generateFormPage3PDFWithDataList(title, datalist, mHeader, remarks);
+    bool result = PDFGenerator::generateSinglePDFWithDataList(title, datalist, mHeader, remarks);
     
     // 已移除PDF生成结果弹窗提示
     // 如果需要调试信息，可以通过qDebug查看结果
@@ -390,7 +390,7 @@ void Form_page3::on_pushButton_3_clicked()
     
     chk_items_result *test = itemsResultList.at(1);
 
-    PDFGenerator::generateFormPage3PDFWithDataList(test->getTitle(),
+    PDFGenerator::generateSinglePDFWithDataList(test->getTitle(),
                                                                 test->getDataList(),
                                                                 test->getTableHeader(),
                                                                 test->getRemark());

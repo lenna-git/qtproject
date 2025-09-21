@@ -1245,7 +1245,7 @@ void PDFGenerator::generateAndManageFormPage3PDF(const QString &title, QAbstract
 }
 
 // 新函数：根据标题、datalist、表头和备注生成PDF，自动转换datalist为model，然后生成pdf
-bool PDFGenerator::generateFormPage3PDFWithDataList(const QString &title, const QList<chk_singleitem_result *> &dataList, const QStringList &mheader, const QString &remarks, const QString &fileName)
+bool PDFGenerator::generateSinglePDFWithDataList(const QString &title, const QList<chk_singleitem_result *> &dataList, const QStringList &mheader, const QString &remarks, const QString &fileName)
 {
     // 创建QStandardItemModel来存储表格数据
     QStandardItemModel *model = new QStandardItemModel();
