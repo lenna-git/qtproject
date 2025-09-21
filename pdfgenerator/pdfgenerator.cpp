@@ -973,15 +973,14 @@ bool PDFGenerator::generateFormPage3PDF(const QString &title, QAbstractItemModel
     qDebug() << "字体: " << font.family() << ", 大小: " << font.pointSize();
     qDebug() << "表格设置 - 表头高度: " << headerHeight << ", 数据行高度: " << rowHeight;
     
-    // 3. 绘制备注内容 - 在最后一页绘制
+    // 3. 绘制备注内容 - 在表格下方显示
     if (!remarks.isEmpty()) {
-        // 如果有多个页面，在最后一页单独添加备注
-        if (currentPage > 1) {
-            printer.newPage();
+        // 计算表格最后一页的实际位置，确保备注显示在表格下方
+        qreal lastPageTableHeight = (rowCount - rowsProcessed + rowsPerPage) % rowsPerPage;
+        if (lastPageTableHeight == 0) {
+            lastPageTableHeight = rowsPerPage;
         }
-        
-        // 设置备注位置，确保显示在表格下方
-        qreal remarksTop = (currentPage > 1) ? 50 : (tableTop + headerHeight + rowCount * rowHeight + 100); // 在单页时，将备注放在表格下方留出20像素间距
+        qreal remarksTop = tableTop + headerHeight + lastPageTableHeight * rowHeight + 50; // 在表格下方留出50像素间距
         qreal maxWidth = tableWidth;
                
         // 计算文本所需的高度（暂时不需要实际使用）
