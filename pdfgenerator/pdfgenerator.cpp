@@ -963,6 +963,12 @@ bool PDFGenerator::generateFormPage3PDF(const QString &title, QAbstractItemModel
         
         // 确保正确更新已处理的行数，即使有合并单元格
         rowsProcessed = endRow;
+        
+        // 显式绘制完整的表格外框，确保底部边框完整
+        qreal tableBottom = tableTop + headerHeight + (endRow - startRow) * rowHeight;
+        QRectF tableRect(tableLeft, tableTop, tableWidth, tableBottom - tableTop);
+        painter.drawRect(tableRect);
+        
         qDebug() << "当前页处理完成 - 已处理行数: " << rowsProcessed << "/" << rowCount;
         currentPage++;
     }
@@ -975,12 +981,12 @@ bool PDFGenerator::generateFormPage3PDF(const QString &title, QAbstractItemModel
     
     // 3. 绘制备注内容 - 在表格下方显示
     if (!remarks.isEmpty()) {
-        // 计算表格最后一页的实际位置，确保备注显示在表格下方
-        qreal lastPageTableHeight = (rowCount - rowsProcessed + rowsPerPage) % rowsPerPage;
-        if (lastPageTableHeight == 0) {
-            lastPageTableHeight = rowsPerPage;
+        // 计算表格最后一页实际显示的行数
+        qreal lastPageRowsDisplayed = rowCount % rowsPerPage;
+        if (lastPageRowsDisplayed == 0) {
+            lastPageRowsDisplayed = rowsPerPage; // 如果整除，最后一页显示完整的rowsPerPage行
         }
-        qreal remarksTop = tableTop + headerHeight + lastPageTableHeight * rowHeight + 50; // 在表格下方留出50像素间距
+        qreal remarksTop = tableTop + headerHeight + lastPageRowsDisplayed * rowHeight + 20; // 在表格下方留出20像素间距（减小间距）
         qreal maxWidth = tableWidth;
                
         // 计算文本所需的高度（暂时不需要实际使用）
