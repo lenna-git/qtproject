@@ -9,7 +9,7 @@ TableGenerator::TableGenerator(QObject *parent) : QObject(parent)
 void TableGenerator::generateTable(QStandardItemModel *model, 
                                   QTableView *view, 
                                   const QStringList &header, 
-                                  const QList<stream_result_all_data *> &dataList)
+                                  const QList<chk_singleitem_result *> &dataList)
 {
     if (!model) return;
     
@@ -23,7 +23,7 @@ void TableGenerator::generateTable(QStandardItemModel *model,
     // 根据数据列表填充表格
     for(int i = 0; i < dataList.size(); i++)
     {
-        const stream_result_all_data *tmp = dataList.at(i);
+        const chk_singleitem_result *tmp = dataList.at(i);
         
         // 确保模型有足够的行
         if (i >= model->rowCount())

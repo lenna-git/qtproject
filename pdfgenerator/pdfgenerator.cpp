@@ -24,7 +24,7 @@
 #include <QTextLine>
 #include <QTextDocument>
 #include<QStandardItemModel>
-#include "../chkresultclass/stream_result_all_data.h"
+#include "../chkresultclass/chk_singleitem_result.h"
 
 
 PDFGenerator::PDFGenerator(QObject *parent) : QObject(parent)
@@ -658,8 +658,8 @@ bool PDFGenerator::generateReportPDF(const QString &fileName, const ReportConten
     return true;
 }
 
-// 为Form_page3生成PDF报告
-bool PDFGenerator::generateFormPage3PDF(const QString &title, QAbstractItemModel *model, const QString &remarks, const QString &fileName)
+// 生成包含表格模型的单个PDF报告
+bool PDFGenerator::generateSinglePDFwithTableModel(const QString &title, QAbstractItemModel *model, const QString &remarks, const QString &fileName)
 {
     // 确保必要的参数不为空
     if (model == nullptr) {
@@ -1224,11 +1224,6 @@ void PDFGenerator::managePDFReport(const QString &defaultFileName,
         });
     });
     
-    // 已移除PDF生成成功弹窗
-    // 显示成功消息
-    // if (parent) {
-    //     QMessageBox::information(parent, "成功", "PDF文件已成功生成！");
-    // }
 }
 
 // 生成临时PDF文件，预览并询问是否保存（用于Form_page3）
@@ -1245,12 +1240,12 @@ void PDFGenerator::generateAndManageFormPage3PDF(const QString &title, QAbstract
     
     // 使用managePDFReport函数处理PDF生成、预览和保存逻辑
     managePDFReport("检验结果报告.pdf", [=](const QString &fileName) {
-        return generateFormPage3PDF(title, model, remarks, fileName);
+        return generateSinglePDFwithTableModel(title, model, remarks, fileName);
     }, nullptr);
 }
 
 // 新函数：根据标题、datalist、表头和备注生成PDF，自动转换datalist为model，然后生成pdf
-bool PDFGenerator::generateFormPage3PDFWithDataList(const QString &title, const QList<stream_result_all_data *> &dataList, const QStringList &mheader, const QString &remarks, const QString &fileName)
+bool PDFGenerator::generateFormPage3PDFWithDataList(const QString &title, const QList<chk_singleitem_result *> &dataList, const QStringList &mheader, const QString &remarks, const QString &fileName)
 {
     // 创建QStandardItemModel来存储表格数据
     QStandardItemModel *model = new QStandardItemModel();
@@ -1284,7 +1279,7 @@ bool PDFGenerator::generateFormPage3PDFWithDataList(const QString &title, const 
     
     // 填充表格数据
     for (int row = 0; row < dataList.size(); ++row) {
-        const stream_result_all_data *data = dataList.at(row);
+        const chk_singleitem_result *data = dataList.at(row);
         for (int col = 0; col < data->fieldCount(); ++col) {
             QString value = data->getField(col);
             QStandardItem *item = new QStandardItem(value);
@@ -1293,10 +1288,10 @@ bool PDFGenerator::generateFormPage3PDFWithDataList(const QString &title, const 
         }
     }
     
-    // 调用现有的generateFormPage3PDF函数生成PDF
-    // 如果提供了fileName参数，直接使用该参数调用generateFormPage3PDF
+    // 调用现有的generateSinglePDFwithTableModel函数生成PDF
+    // 如果提供了fileName参数，直接使用该参数调用generateSinglePDFwithTableModel
     if (!fileName.isEmpty()) {
-        generateFormPage3PDF(title, model, remarks, fileName);
+        generateSinglePDFwithTableModel(title, model, remarks, fileName);
     } else {
         generateAndManageFormPage3PDF(title, model, remarks);
     }

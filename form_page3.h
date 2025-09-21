@@ -3,7 +3,7 @@
 
 #include <QWidget>
 #include<QStandardItemModel>
-#include"chkresultclass/stream_result_all_data.h"
+#include"chkresultclass/chk_singleitem_result.h"
 #include"tablegenerator/tablegenerator.h"
 
 namespace Ui {
@@ -22,7 +22,7 @@ private:
     Ui::Form_page3 *ui;
     QStandardItemModel*  mTableViewModel ;
     QStringList mHeader;
-    QList<stream_result_all_data *> datalist;
+    QList<chk_singleitem_result *> datalist;
     TableGenerator *mTableGenerator;
 
     void paintTable_all();
@@ -30,6 +30,7 @@ private:
 private slots:
     void on_pushButton_clicked();
     void on_pushButton_2_clicked();
+    void on_pushButton_3_clicked();
 };
 
 #endif // FORM_PAGE3_H

@@ -33,7 +33,7 @@ SOURCES += \
     form_page2.cpp \
     pdfgenerator/pdfgenerator.cpp \
     form_page3.cpp \
-    chkresultclass/stream_result_all_data.cpp \
+    chkresultclass/chk_singleitem_result.cpp \
     tablegenerator/tablegenerator.cpp
 
 HEADERS += \
@@ -42,7 +42,7 @@ HEADERS += \
     form_page2.h \
     pdfgenerator/pdfgenerator.h \
     form_page3.h \
-    chkresultclass/stream_result_all_data.h \
+    chkresultclass/chk_singleitem_result.h \
     tablegenerator/tablegenerator.h
 
 FORMS += \

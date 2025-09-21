@@ -5,12 +5,14 @@
 #include <QString>
 #include <QWidget>
 #include <QStringList>
+#include <QList>
 #include <functional>
 #include <QStandardItemModel>
+#include <QAbstractItemModel>
 #include <QTextLayout>
 #include <QTextLine>
 #include <QTextDocument>
-#include "../chkresultclass/stream_result_all_data.h"
+#include "../chkresultclass/chk_singleitem_result.h"
 
 // 定义ReportContent结构体，用于存储可变动的报告内容
 typedef struct {
@@ -53,11 +55,11 @@ static bool generateReportPDFWithProjects(const QString &fileName, const ReportC
 // 为Form_page2生成表格PDF
 static bool generateTablePDF(const QString &fileName, QWidget *parent = nullptr);
 
-// 为Form_page3生成PDF报告
-static bool generateFormPage3PDF(const QString &title, QAbstractItemModel *model, const QString &remarks, const QString &fileName = "");
+// 生成包含表格模型的单个PDF报告
+static bool generateSinglePDFwithTableModel(const QString &title, QAbstractItemModel *model, const QString &remarks, const QString &fileName = "");
 
 // 新函数：根据标题、datalist、表头和备注生成PDF，自动转换datalist为model
-    static bool generateFormPage3PDFWithDataList(const QString &title, const QList<stream_result_all_data *> &dataList, const QStringList &mheader, const QString &remarks, const QString &fileName = "");
+    static bool generateFormPage3PDFWithDataList(const QString &title, const QList<chk_singleitem_result *> &dataList, const QStringList &mheader, const QString &remarks, const QString &fileName = "");
 
 // 生成临时PDF文件，预览并询问是否保存（用于Form_page1，接受自定义内容）
 static void generateAndManageReportPDF(const ReportContent &content, QWidget *parent = nullptr);

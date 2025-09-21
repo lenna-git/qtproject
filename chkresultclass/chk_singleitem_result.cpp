@@ -1,7 +1,7 @@
-#include "stream_result_all_data.h"
+#include "chk_singleitem_result.h"
 
 // 内部方法：初始化字段名
-void stream_result_all_data::initFieldNames()
+void chk_singleitem_result::initFieldNames()
 {
     // 设置默认的字段名，统一使用默认命名方式
     m_fieldNames.clear();
@@ -9,7 +9,7 @@ void stream_result_all_data::initFieldNames()
 }
 
 // 默认构造函数
-stream_result_all_data::stream_result_all_data()
+chk_singleitem_result::chk_singleitem_result()
 {
     initFieldNames();
     // 初始化三个默认空值
@@ -17,7 +17,7 @@ stream_result_all_data::stream_result_all_data()
 }
 
 // 构造函数：仅通过字段值初始化
-stream_result_all_data::stream_result_all_data(const QStringList &fieldValues)
+chk_singleitem_result::chk_singleitem_result(const QStringList &fieldValues)
 {
     m_fieldValues = fieldValues;
     
@@ -29,7 +29,7 @@ stream_result_all_data::stream_result_all_data(const QStringList &fieldValues)
 }
 
 // 构造函数：通过字段名和字段值初始化
-stream_result_all_data::stream_result_all_data(const QStringList &fieldNames, const QStringList &fieldValues)
+chk_singleitem_result::chk_singleitem_result(const QStringList &fieldNames, const QStringList &fieldValues)
 {
     m_fieldNames = fieldNames;
     m_fieldValues = fieldValues;
@@ -49,20 +49,20 @@ stream_result_all_data::stream_result_all_data(const QStringList &fieldNames, co
 }
 
 // 析构函数
-stream_result_all_data::~stream_result_all_data()
+chk_singleitem_result::~chk_singleitem_result()
 {
     // 不需要特别的清理操作，QStringList会自动处理内存
 }
 
 // 添加带名称的字段
-void stream_result_all_data::addField(const QString &name, const QString &value)
+void chk_singleitem_result::addField(const QString &name, const QString &value)
 {
     m_fieldNames << name;
     m_fieldValues << value;
 }
 
 // 添加不带名称的字段（使用默认名称）
-void stream_result_all_data::addField(const QString &value)
+void chk_singleitem_result::addField(const QString &value)
 {
     // 所有字段统一使用默认命名方式
     QString fieldName = QString("field%1").arg(m_fieldNames.size()+1);
@@ -72,7 +72,7 @@ void stream_result_all_data::addField(const QString &value)
 }
 
 // 通过索引设置字段值
-void stream_result_all_data::setField(int index, const QString &value)
+void chk_singleitem_result::setField(int index, const QString &value)
 {
     if (index >= 0 && index < m_fieldValues.size()) {
         m_fieldValues[index] = value;
@@ -89,7 +89,7 @@ void stream_result_all_data::setField(int index, const QString &value)
 }
 
 // 通过字段名设置字段值
-void stream_result_all_data::setField(const QString &name, const QString &value)
+void chk_singleitem_result::setField(const QString &name, const QString &value)
 {
     int index = m_fieldNames.indexOf(name);
     if (index >= 0) {
@@ -101,7 +101,7 @@ void stream_result_all_data::setField(const QString &name, const QString &value)
 }
 
 // 通过索引获取字段值
-QString stream_result_all_data::getField(int index) const
+QString chk_singleitem_result::getField(int index) const
 {
     if (index >= 0 && index < m_fieldValues.size()) {
         return m_fieldValues[index];
@@ -110,7 +110,7 @@ QString stream_result_all_data::getField(int index) const
 }
 
 // 通过字段名获取字段值
-QString stream_result_all_data::getField(const QString &name) const
+QString chk_singleitem_result::getField(const QString &name) const
 {
     int index = m_fieldNames.indexOf(name);
     if (index >= 0) {
@@ -120,19 +120,19 @@ QString stream_result_all_data::getField(const QString &name) const
 }
 
 // 获取所有字段值
-QStringList stream_result_all_data::getAllFields() const
+QStringList chk_singleitem_result::getAllFields() const
 {
     return m_fieldValues;
 }
 
 // 获取所有字段名
-QStringList stream_result_all_data::getFieldNames() const
+QStringList chk_singleitem_result::getFieldNames() const
 {
     return m_fieldNames;
 }
 
 // 获取字段数量
-int stream_result_all_data::fieldCount() const
+int chk_singleitem_result::fieldCount() const
 {
     return m_fieldValues.size();
 }

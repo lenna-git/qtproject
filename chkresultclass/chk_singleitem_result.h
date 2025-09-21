@@ -1,17 +1,17 @@
-#ifndef STREAM_RESULT_ALL_DATA_H
-#define STREAM_RESULT_ALL_DATA_H
+#ifndef CHK_SINGLEITEM_RESULT_H
+#define CHK_SINGLEITEM_RESULT_H
 #include<QString>
 #include<QStringList>
 
 
-class stream_result_all_data
+class chk_singleitem_result
 {
 public:
     // 构造函数 - 只接受QStringList作为输入
-    stream_result_all_data();
-    stream_result_all_data(const QStringList &fieldValues);
-    stream_result_all_data(const QStringList &fieldNames, const QStringList &fieldValues);
-    ~stream_result_all_data();
+    chk_singleitem_result();
+    chk_singleitem_result(const QStringList &fieldValues);
+    chk_singleitem_result(const QStringList &fieldNames, const QStringList &fieldValues);
+    ~chk_singleitem_result();
 
     // 添加数据
     void addField(const QString &name, const QString &value);
@@ -32,7 +32,7 @@ public:
     // 获取字段数量
     int fieldCount() const;
     
-
+    
 
 private:
     QStringList m_fieldValues;  // 存储所有字段的值
@@ -42,4 +42,4 @@ private:
     void initFieldNames();
 };
 
-#endif // STREAM_RESULT_ALL_DATA_H
+#endif // CHK_SINGLEITEM_RESULT_H

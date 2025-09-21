@@ -5,7 +5,7 @@
 #include <QStandardItemModel>
 #include <QTableView>
 #include <QHeaderView>
-#include "chkresultclass/stream_result_all_data.h"
+#include "chkresultclass/chk_singleitem_result.h"
 #include <QMap>
 
 class TableGenerator : public QObject
@@ -18,7 +18,7 @@ public:
     void generateTable(QStandardItemModel *model, 
                       QTableView *view, 
                       const QStringList &header, 
-                      const QList<stream_result_all_data *> &dataList);
+                      const QList<chk_singleitem_result *> &dataList);
     
     // 为表格视图设置模型并进行基本配置
     void setupTableView(QTableView *view, QStandardItemModel *model);
