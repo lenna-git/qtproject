@@ -71,7 +71,10 @@ static void generateAndManageReportPDFWith6Projects(const ReportContent &content
 static void generateAndManageTablePDF(QWidget *parent = nullptr);
 
     // 生成临时PDF文件，预览并询问是否保存（用于Form_page3）
-    static void generateAndManageFormPage3PDF(const QString &title, QAbstractItemModel *model, const QString &remarks);
+//    static void generateAndManageFormPage3PDF(const QString &title, QAbstractItemModel *model, const QString &remarks);
+
+    // 生成临时PDF文件，预览并询问是否保存（基于表格模型）
+    static void generateAndManagePDFwithTableModel(const QString &title, QAbstractItemModel *model, const QString &remarks);
 
 signals:
     

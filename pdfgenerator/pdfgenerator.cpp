@@ -1226,9 +1226,9 @@ void PDFGenerator::managePDFReport(const QString &defaultFileName,
     
 }
 
-// 生成临时PDF文件，预览并询问是否保存（用于Form_page3）
+//// 生成临时PDF文件，预览并询问是否保存（用于Form_page3）
 
-void PDFGenerator::generateAndManageFormPage3PDF(const QString &title, QAbstractItemModel *model, const QString &remarks)
+void PDFGenerator::generateAndManagePDFwithTableModel(const QString &title, QAbstractItemModel *model, const QString &remarks)
 {
     qDebug() << "开始生成Form_page3的PDF报告";
         
@@ -1293,7 +1293,9 @@ bool PDFGenerator::generateSinglePDFWithDataList(const QString &title, const QLi
     if (!fileName.isEmpty()) {
         generateSinglePDFwithTableModel(title, model, remarks, fileName);
     } else {
-        generateAndManageFormPage3PDF(title, model, remarks);
+        managePDFReport("检验结果报告.pdf", [=](const QString &fileName) {
+            return generateSinglePDFwithTableModel(title, model, remarks, fileName);
+        }, nullptr);
     }
     
     // 清理临时创建的model

@@ -54,7 +54,7 @@ void Form_page3::on_pushButton_clicked()
 {
     // 调用PDFGenerator中的方法生成、预览和管理PDF文件
 //    PDFGenerator::generateAndManageFormPage3PDF(this);
-    PDFGenerator::generateAndManageFormPage3PDF(ui->label->text(),ui->tableView->model(),ui->textEdit->toPlainText());
+    PDFGenerator::generateAndManagePDFwithTableModel(ui->label->text(),ui->tableView->model(),ui->textEdit->toPlainText());
 }
 
 //绘制表
