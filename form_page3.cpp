@@ -337,11 +337,11 @@ void Form_page3::on_pushButton_3_clicked()
 {
     qDebug()<<"on_pushButton_3_clicked";
 
-    // 初始化一个size为3的QList<chk_items_result>
+    // 初始化一个size为7的QList<chk_items_result>（原3个+新增4个）
     QList<chk_items_result *> itemsResultList;
     
     // 为每个chk_items_result对象设置实际值
-    for(int i = 0; i < 3; i++){
+    for(int i = 0; i < 7; i++){
         chk_items_result *itemResult = new chk_items_result();
         
         // 设置标题
@@ -353,8 +353,8 @@ void Form_page3::on_pushButton_3_clicked()
         itemResult->setTableHeader(header);
         
         QList<chk_singleitem_result *> list1 ;
-        // 为每个结果集创建2个示例数据项
-        for(int j = 0; j < 2; j++){
+        // 为每个结果集创建100个示例数据项
+        for(int j = 0; j < 100; j++){
             // 创建字段值列表 - 确保与header元素数量一致（4个元素）
             QStringList fieldValues;
             // 为每个字段设置实际的初始化值
