@@ -1536,7 +1536,22 @@ bool PDFGenerator::generateMultiPagePDFWithItemsResultList(const QList<chk_items
         
         // 3. 绘制备注内容
         if (!remarks.isEmpty()) {
-            qreal remarksTop = currentTableTop + headerHeight + rowCount * rowHeight + 20;
+            // 计算表格最后一页实际显示的行数，考虑分页情况
+            qreal lastPageRowsDisplayed = rowCount % rowsPerPage;
+            if (lastPageRowsDisplayed == 0) {
+                lastPageRowsDisplayed = rowsPerPage; // 如果整除，最后一页显示完整的rowsPerPage行
+            }
+            
+            // 计算备注的起始位置，考虑表格实际占用的空间
+            qreal remarksTop;
+            if (currentPage > 1) {
+                // 如果表格分成了多页，备注放在最后一页的顶部下方
+                remarksTop = 50 + headerHeight + lastPageRowsDisplayed * rowHeight + 20;
+            } else {
+                // 如果表格只有一页，备注放在表格下方
+                remarksTop = currentTableTop + headerHeight + lastPageRowsDisplayed * rowHeight + 20;
+            }
+            
             qreal maxWidth = tableWidth;
             
             font.setBold(false);
