@@ -50,9 +50,6 @@ static bool generateReportPDF(const QString &fileName, const ReportContent &cont
 // 生成只有6个检验项目的PDF报告
 static bool generateReportPDFWith6Projects(const QString &fileName, const ReportContent &content, QWidget *parent = nullptr);
 
-// 为了修复编译错误添加的别名函数
-static bool generateReportPDFWithProjects(const QString &fileName, const ReportContent &content, QWidget *parent = nullptr);
-
 // 为Form_page2生成表格PDF
 static bool generateTablePDF(const QString &fileName, QWidget *parent = nullptr);
 
