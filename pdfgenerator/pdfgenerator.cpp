@@ -264,12 +264,18 @@ bool PDFGenerator::generateReportPDFWith6Projects(const QString &fileName, const
 
     // 绘制检验结论行
     painter.drawLine(tableLeft, currentY, tableLeft + tableWidth, currentY);
-    painter.drawLine(tableLeft + col1Width, currentY, tableLeft + col1Width, currentY + lineHeight);
     painter.drawLine(tableLeft, currentY + lineHeight, tableLeft + tableWidth, currentY + lineHeight);
 
-    // 填写检验结论
-    painter.drawText(QRectF(tableLeft, currentY, col1Width, lineHeight), Qt::AlignCenter | Qt::TextSingleLine, "检验结论");
-    painter.drawText(QRectF(tableLeft + col1Width, currentY, tableWidth - col1Width, lineHeight), Qt::AlignCenter | Qt::TextSingleLine, content.testConclusion);
+    // 检查是否需要合并单元格
+    if (content.testConclusion.contains("不通过")) {
+        // 不绘制中间分隔线，合并单元格居中显示
+        painter.drawText(QRectF(tableLeft, currentY, tableWidth, lineHeight), Qt::AlignCenter | Qt::TextSingleLine, "检验结论：" + content.testConclusion);
+    } else {
+        // 保留原有分隔线和格式
+        painter.drawLine(tableLeft + col1Width, currentY, tableLeft + col1Width, currentY + lineHeight);
+        painter.drawText(QRectF(tableLeft, currentY, col1Width, lineHeight), Qt::AlignCenter | Qt::TextSingleLine, "检验结论");
+        painter.drawText(QRectF(tableLeft + col1Width, currentY, tableWidth - col1Width, lineHeight), Qt::AlignCenter | Qt::TextSingleLine, content.testConclusion);
+    }
 
     // 绘制备注行 - 高度调整为3行
     currentY += lineHeight;
