@@ -408,8 +408,8 @@ bool PDFGenerator::generateTablePDF(const QString &fileName, QWidget *parent)
     return true;
 }
 
-// 为Form_page1绘制PDF报告（接受自定义内容,）
-bool PDFGenerator::generateReportPDF(const QString &fileName, const ReportContent &content, QWidget *parent)
+// 为Form_page1绘制PDF报告（接受自定义内容,支持9个检验项目）
+bool PDFGenerator::generateReportPDFWith9Projects(const QString &fileName, const ReportContent &content, QWidget *parent)
 {
 
     // 创建QPrinter对象并设置为PDF输出模式
@@ -1076,7 +1076,7 @@ void PDFGenerator::generateAndManageReportPDF(const ReportContent &content, QWid
     
     // 调用通用管理函数，传入默认文件名和生成函数
     managePDFReport("document.pdf", 
-                  [content, parent](const QString &fileName) { return generateReportPDF(fileName, content, parent); }, 
+                  [content, parent](const QString &fileName) { return generateReportPDFWith9Projects(fileName, content, parent); }, 
                   parent);
 }
 

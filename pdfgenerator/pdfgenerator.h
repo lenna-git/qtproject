@@ -44,8 +44,8 @@ public:
     explicit PDFGenerator(QObject *parent = nullptr);
 
 
-// 为Form_page1生成PDF报告（接受自定义内容）
-static bool generateReportPDF(const QString &fileName, const ReportContent &content, QWidget *parent = nullptr);
+// 为Form_page1生成PDF报告（接受自定义内容，支持9个检验项目）
+static bool generateReportPDFWith9Projects(const QString &fileName, const ReportContent &content, QWidget *parent = nullptr);
 
 // 生成只有6个检验项目的PDF报告
 static bool generateReportPDFWith6Projects(const QString &fileName, const ReportContent &content, QWidget *parent = nullptr);
