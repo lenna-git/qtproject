@@ -60,9 +60,10 @@ bool PDFGenerator::generateReportPDFWith6Projects(const QString &fileName, const
     QPainter painter;
     if (!painter.begin(&printer))
     {
-        qWarning("无法创建PDF内容");
+        myLog->warn("无法创建PDF内容");
         if (parent) {
             QMessageBox::critical(parent, "错误", "无法创建PDF内容");
+            myLog->info("显示错误消息框：无法创建PDF内容");
         }
         return false;
     }
@@ -93,11 +94,11 @@ bool PDFGenerator::generateReportPDFWith6Projects(const QString &fileName, const
     // 如果没有找到指定的中文字体，使用默认字体
     if (selectedFont.isEmpty()) {
         selectedFont = "SimHei";
-        qDebug() << "没有找到指定的中文字体，使用默认字体";
+        myLog->info("没有找到指定的中文字体，使用默认字体");
     }
     
     font.setFamily(selectedFont);
-    qDebug() << "选择的字体: " << selectedFont;
+    myLog->info(QString("选择的字体: %1").arg(selectedFont));
     painter.setFont(font);
 
     // 计算内容区域
@@ -108,9 +109,9 @@ bool PDFGenerator::generateReportPDFWith6Projects(const QString &fileName, const
     qreal tableHeight = pageHeight - 100; // 增加表格高度，使其占满整个页面
     qreal totalRows = 14; // 减少总行数的估算，增加行高
     qreal lineHeight = tableHeight / totalRows; // 重新计算行高，确保表格占满页面
-    qDebug() << "页面尺寸(6项目): " << pageWidth << "x" << pageHeight;
-    qDebug() << "表格尺寸(6项目): " << tableWidth << "x" << tableHeight;
-    qDebug() << "行高(6项目): " << lineHeight;
+    myLog->info(QString("页面尺寸(6项目): %1x%2").arg(pageWidth).arg(pageHeight));
+    myLog->info(QString("表格尺寸(6项目): %1x%2").arg(tableWidth).arg(tableHeight));
+    myLog->info(QString("行高(6项目): %1").arg(lineHeight));
     qreal col1Width = 150; // 增加第一列宽度，使其能够显示4个中文字符
     qreal col2Width = 170; // 调整第二列宽度，保持表格整体平衡
     qreal col3Width = 130; // 增加第三列宽度，使其能够显示"分组轮数"4个中文字符
@@ -292,7 +293,7 @@ bool PDFGenerator::generateReportPDFWith6Projects(const QString &fileName, const
 
     // 结束绘制
     painter.end();
-    qDebug() << "PDF文件已成功生成（6个检验项目版本）";
+    myLog->info("PDF文件已成功生成（6个检验项目版本）");
 
     // 强制刷新和释放资源
     printer.newPage(); // 确保所有数据都写入文件
@@ -311,8 +312,10 @@ bool PDFGenerator::generateTablePDF(const QString &fileName, QWidget *parent)
     // 创建QPainter用于PDF绘制
     QPainter painter;
     if (!painter.begin(&printer)) {
+        myLog->warn("无法创建PDF文件");
         if (parent) {
             QMessageBox::critical(parent, "错误", "无法创建PDF文件");
+            myLog->info("显示错误消息框：无法创建PDF文件");
         }
         return false;
     }
@@ -424,9 +427,10 @@ bool PDFGenerator::generateReportPDF(const QString &fileName, const ReportConten
     QPainter painter;
     if (!painter.begin(&printer))
     {
-        qWarning("无法创建PDF内容");
+        myLog->warn("无法创建PDF内容");
         if (parent) {
             QMessageBox::critical(parent, "错误", "无法创建PDF内容");
+            myLog->info("显示错误消息框：无法创建PDF内容");
         }
         return false;
     }
@@ -457,11 +461,11 @@ bool PDFGenerator::generateReportPDF(const QString &fileName, const ReportConten
     // 如果没有找到指定的中文字体，使用默认字体
     if (selectedFont.isEmpty()) {
         selectedFont = "SimHei";
-        qDebug() << "没有找到指定的中文字体，使用默认字体";
+        myLog->info("没有找到指定的中文字体，使用默认字体");
     }
     
     font.setFamily(selectedFont);
-    qDebug() << "选择的字体: " << selectedFont;
+    myLog->info(QString("选择的字体: %1").arg(selectedFont));
     painter.setFont(font);
 
     // 计算内容区域
@@ -472,9 +476,9 @@ bool PDFGenerator::generateReportPDF(const QString &fileName, const ReportConten
     qreal tableHeight = pageHeight - 140; // 相应调整表格高度
     qreal totalRows = 16; // 减少总行数的估算，增加行高
     qreal lineHeight = tableHeight / totalRows; // 使用新的表格高度计算行高，确保与修改的尺寸一致
-    qDebug() << "页面尺寸: " << pageWidth << "x" << pageHeight;
-    qDebug() << "表格尺寸: " << tableWidth << "x" << tableHeight;
-    qDebug() << "行高: " << lineHeight;
+    myLog->info(QString("页面尺寸: %1x%2").arg(pageWidth).arg(pageHeight));
+    myLog->info(QString("表格尺寸: %1x%2").arg(tableWidth).arg(tableHeight));
+    myLog->info(QString("行高: %1").arg(lineHeight));
     qreal col1Width = 150; // 增加第一列宽度，使其能够显示4个中文字符
     qreal col2Width = 170; // 调整第二列宽度，保持表格整体平衡
     qreal col3Width = 130; // 增加第三列宽度，使其能够显示"分组轮数"4个中文字符
@@ -655,7 +659,7 @@ bool PDFGenerator::generateReportPDF(const QString &fileName, const ReportConten
 
     // 结束绘制
     painter.end();
-    qDebug() << "PDF文件已成功生成";
+    myLog->info("PDF文件已成功生成");
 
     // 强制刷新和释放资源
     printer.newPage(); // 确保所有数据都写入文件
@@ -729,21 +733,21 @@ bool PDFGenerator::generateSinglePDFwithTableModel(const QString &title, QAbstra
     // 如果没有找到指定的中文字体，使用默认字体
     if (selectedFont.isEmpty()) {
         selectedFont = "SimHei";
-        qDebug() << "没有找到指定的中文字体，使用默认字体";
+        myLog->info("没有找到指定的中文字体，使用默认字体");
     }
     
     font.setFamily(selectedFont);
     font.setPointSize(6); // 使用较小的字体大小以提高密集文本的可读性
     font.setStyleStrategy(QFont::PreferAntialias); // 启用抗锯齿
     painter.setFont(font);
-    qDebug() << "设置字体: " << font.family() << ", 大小: " << font.pointSize();
-    qDebug() << "字体抗锯齿已" << (font.styleStrategy() & QFont::PreferAntialias ? "启用" : "禁用");
+    myLog->info(QString("设置字体: %1, 大小: %2").arg(font.family()).arg(font.pointSize()));
+    myLog->info(QString("字体抗锯齿已%1").arg((font.styleStrategy() & QFont::PreferAntialias ? "启用" : "禁用")));
 
     // 调试信息
-    qDebug() << "正在生成Form_page3的PDF报告";
-    qDebug() << "标题内容:" << title;
-    qDebug() << "表格行数:" << model->rowCount() << "，表格列数:" << model->columnCount();
-    qDebug() << "备注内容:" << remarks;
+    myLog->info("正在生成Form_page3的PDF报告");
+    myLog->info(QString("标题内容:%1").arg(title));
+    myLog->info(QString("表格行数:%1，表格列数:%2").arg(model->rowCount()).arg(model->columnCount()));
+    myLog->info(QString("备注内容:%1").arg(remarks));
 
     // 1. 绘制标题
     QString titleText = title.isEmpty() ? "检验结果报告" : title;
@@ -770,7 +774,7 @@ bool PDFGenerator::generateSinglePDFwithTableModel(const QString &title, QAbstra
     // 计算行高和列宽 - 调整为合适的高度，确保内容不会挤在一起
     qreal headerHeight = 200; // 表头高度
     qreal rowHeight = 200; // 数据行高度
-    qDebug() << "表格行高设置 - 表头: " << headerHeight << ", 数据行: " << rowHeight;
+    myLog->info(QString("表格行高设置 - 表头: %1, 数据行: %2").arg(headerHeight).arg(rowHeight));
     
     // 直接使用均匀分布的列宽
     QVector<qreal> columnWidths;
@@ -780,7 +784,7 @@ bool PDFGenerator::generateSinglePDFwithTableModel(const QString &title, QAbstra
     }
     
     // 添加调试信息
-    qDebug() << "表格列宽设置 - 列数: " << columnCount << ", 每列宽度: " << uniformWidth;
+    myLog->info(QString("表格列宽设置 - 列数: %1, 每列宽度: %2").arg(columnCount).arg(uniformWidth));
     
     // 检测需要合并的单元格（从索引1开始，跳过序号列）
     QVector<QVector<int>> mergedCells(rowCount, QVector<int>(columnCount, 1)); // 记录每个单元格需要合并的行数
@@ -827,7 +831,7 @@ bool PDFGenerator::generateSinglePDFwithTableModel(const QString &title, QAbstra
         rowsPerPage = 1;
     }
     
-    qDebug() << "每页可显示行数: " << rowsPerPage;
+    myLog->info(QString("每页可显示行数: %1").arg(rowsPerPage));
 
     // 强制设置每页至少显示2行数据，避免显示太少
     if (rowsPerPage < 2) {
@@ -835,9 +839,9 @@ bool PDFGenerator::generateSinglePDFwithTableModel(const QString &title, QAbstra
     }
 
     // 增加额外的调试信息，帮助分析表格显示问题
-    qDebug() << "表格总览 - 总行数: " << rowCount << ", 页面高度: " << pageHeight;
-    qDebug() << "表格起始位置: " << tableTop << ", 可用高度: " << availableHeight;
-    qDebug() << "预计需要页面数: " << static_cast<int>(ceil(static_cast<qreal>(rowCount) / rowsPerPage));
+    myLog->info(QString("表格总览 - 总行数: %1, 页面高度: %2").arg(rowCount).arg(pageHeight));
+    myLog->info(QString("表格起始位置: %1, 可用高度: %2").arg(tableTop).arg(availableHeight));
+    myLog->info(QString("预计需要页面数: %1").arg(static_cast<int>(ceil(static_cast<qreal>(rowCount) / rowsPerPage))));
     
     // 绘制数据行，处理分页和单元格合并
     int currentPage = 0;
@@ -924,15 +928,15 @@ bool PDFGenerator::generateSinglePDFwithTableModel(const QString &title, QAbstra
                     // 如果合并单元格跨页，调整为只显示当前页的部分
                     cellHeight = (endRow - row) * rowHeight;
                     rowspan = endRow - row;
-                    qDebug() << "单元格跨页处理 - 行: " << row << ", 列: " << col << ", 调整后 rowspan: " << rowspan;
+                    myLog->info(QString("单元格跨页处理 - 行: %1, 列: %2, 调整后 rowspan: %3").arg(row).arg(col).arg(rowspan));
                 }
                 
                 // 先获取单元格文本
                 QModelIndex index = model->index(row, col);
                 QString cellText = model->data(index).toString();
                 
-                qDebug() << "绘制单元格 - 行: " << row << ", 列: " << col << ", 内容: " << cellText;
-                qDebug() << "单元格位置 - X: " << currentX << ", Y: " << currentY << ", 宽度: " << columnWidths[col] << ", 高度: " << cellHeight;
+                myLog->info(QString("绘制单元格 - 行: %1, 列: %2, 内容: %3").arg(row).arg(col).arg(cellText));
+                myLog->info(QString("单元格位置 - X: %1, Y: %2, 宽度: %3, 高度: %4").arg(currentX).arg(currentY).arg(columnWidths[col]).arg(cellHeight));
                 
                 QRectF cellRect(currentX, currentY, columnWidths[col], cellHeight);
                 
@@ -974,15 +978,15 @@ bool PDFGenerator::generateSinglePDFwithTableModel(const QString &title, QAbstra
         QRectF tableRect(tableLeft, tableTop, tableWidth, tableBottom - tableTop);
         painter.drawRect(tableRect);
         
-        qDebug() << "当前页处理完成 - 已处理行数: " << rowsProcessed << "/" << rowCount;
+        myLog->info(QString("当前页处理完成 - 已处理行数: %1/%2").arg(rowsProcessed).arg(rowCount));
         currentPage++;
     }
     
     // 添加调试信息
-    qDebug() << "Form_page3 PDF生成完成 - 使用的设置：";
-    qDebug() << "页面尺寸: " << pageWidth << "x" << pageHeight;
-    qDebug() << "字体: " << font.family() << ", 大小: " << font.pointSize();
-    qDebug() << "表格设置 - 表头高度: " << headerHeight << ", 数据行高度: " << rowHeight;
+    myLog->info("Form_page3 PDF生成完成 - 使用的设置：");
+    myLog->info(QString("页面尺寸: %1x%2").arg(pageWidth).arg(pageHeight));
+    myLog->info(QString("字体: %1, 大小: %2").arg(font.family()).arg(font.pointSize()));
+    myLog->info(QString("表格设置 - 表头高度: %1, 数据行高度: %2").arg(headerHeight).arg(rowHeight));
     
     // 3. 绘制备注内容 - 在表格下方显示
     if (!remarks.isEmpty()) {
@@ -1015,7 +1019,7 @@ bool PDFGenerator::generateSinglePDFwithTableModel(const QString &title, QAbstra
             charsPerLine = qMax(10, qMin(50, charsPerLine));
         }
         
-        qDebug() << "备注每行可以显示的汉字数量:" << charsPerLine;
+        myLog->info(QString("备注每行可以显示的汉字数量:%1").arg(charsPerLine));
         int linesNeededAll=0;
         for (const QString &line : lines) {
             // 方法1：使用QFontMetrics计算文本在指定宽度下需要的行数
@@ -1024,18 +1028,18 @@ bool PDFGenerator::generateSinglePDFwithTableModel(const QString &title, QAbstra
 
             // 方法2：根据汉字数量计算需要的行数（中文通常占2个字符宽度）
             int totalChars = line.length();
-            qDebug()<<"totalChars:"<<totalChars;
+            myLog->info(QString("totalChars:%1").arg(totalChars));
             int linesFromCharCount = (totalChars + charsPerLine - 1) / charsPerLine; // 向上取整
-            qDebug()<<"linesFromCharCount:"<<linesFromCharCount;
+            myLog->info(QString("linesFromCharCount:%1").arg(linesFromCharCount));
             // 取两种方法计算结果的较大值，确保有足够的空间
             int linesNeeded = qMax(linesFromMetrics, linesFromCharCount);
-            qDebug()<<"linesNeeded:"<<linesNeeded;
+            myLog->info(QString("linesNeeded:%1").arg(linesNeeded));
             linesNeededAll+=linesNeeded;
         }
 
-        qDebug()<<"linesNeededAll:"<<linesNeededAll;
+        myLog->info(QString("linesNeededAll:%1").arg(linesNeededAll));
         totalHeight = linesNeededAll*lineHeight;
-        qDebug()<<"totalHEight:"<<totalHeight;
+        myLog->info(QString("totalHeight:%1").arg(totalHeight));
         
         // 绘制备注内容
         font.setBold(false);
@@ -1055,7 +1059,7 @@ bool PDFGenerator::generateSinglePDFwithTableModel(const QString &title, QAbstra
 // 用于Form_page1生成只有6个检验项目的pdf
 void PDFGenerator::generateAndManageReportPDFWith6Projects(const ReportContent &content, QWidget *parent)
 {
-    qDebug() << "开始生成Form_page1的PDF报告（6个检验项目版本）"; 
+    myLog->info("开始生成Form_page1的PDF报告（6个检验项目版本）"); 
     
     // 调用通用管理函数，传入默认文件名和生成函数
     managePDFReport("document.pdf", 
@@ -1066,7 +1070,7 @@ void PDFGenerator::generateAndManageReportPDFWith6Projects(const ReportContent &
 // Form_page1生成9个检验项目的pdf
 void PDFGenerator::generateAndManageReportPDF(const ReportContent &content, QWidget *parent)
 {
-    qDebug() << "开始生成Form_page1的PDF报告";
+    myLog->info("开始生成Form_page1的PDF报告");
     
     // 调用通用管理函数，传入默认文件名和生成函数
     managePDFReport("document.pdf", 
@@ -1077,7 +1081,7 @@ void PDFGenerator::generateAndManageReportPDF(const ReportContent &content, QWid
 // 生成临时PDF文件，预览并询问是否保存（用于Form_page2）
 void PDFGenerator::generateAndManageTablePDF(QWidget *parent)
 {
-    qDebug() << "开始生成Form_page2的PDF表格";
+    myLog->info("开始生成Form_page2的PDF表格");
     
     // 调用通用管理函数，传入默认文件名和生成函数
     managePDFReport("table.pdf", 
@@ -1097,7 +1101,7 @@ void PDFGenerator::managePDFReport(const QString &defaultFileName,
                                   std::function<bool(const QString &)> generatorFunc, 
                                   QWidget *parent)
 {
-    qDebug() << "开始生成PDF报告";
+    myLog->info("开始生成PDF报告");
     
     // 创建临时文件，用于存储PDF内容
     QString tempFileName = QDir::temp().absoluteFilePath(QString("qt_temp_%1.pdf").arg(QDateTime::currentDateTime().toString("yyyyMMddhhmmsszzz")));
@@ -1105,17 +1109,18 @@ void PDFGenerator::managePDFReport(const QString &defaultFileName,
     // 测试是否可以创建文件
     QFile testFile(tempFileName);
     if (!testFile.open(QIODevice::WriteOnly)) {
-        qWarning("无法创建临时文件");
+        myLog->warn("无法创建临时PDF文件");
         if (parent) {
             QMessageBox::critical(parent, "错误", "无法创建临时PDF文件");
+            myLog->info("显示错误消息框：无法创建临时PDF文件");
         }
         return;
     }
     testFile.close();
 
-    qDebug() << "PDF临时文件路径：" << tempFileName;
-    qDebug() << "临时文件是否存在：" << QFile::exists(tempFileName);
-    qDebug() << "临时文件所在目录是否存在：" << QFileInfo(tempFileName).absoluteDir().exists();
+    myLog->info(QString("PDF临时文件路径：%1").arg(tempFileName));
+    myLog->info(QString("临时文件是否存在：%1").arg(QFile::exists(tempFileName) ? "是" : "否"));
+    myLog->info(QString("临时文件所在目录是否存在：%1").arg(QFileInfo(tempFileName).absoluteDir().exists() ? "是" : "否"));
 
     // 使用传入的生成函数生成PDF
     if (!generatorFunc(tempFileName)) {
@@ -1124,15 +1129,15 @@ void PDFGenerator::managePDFReport(const QString &defaultFileName,
 
     qApp->processEvents(); // 处理所有待处理的事件
 
-    qDebug() << "PDF内容已生成，准备打开预览";
+    myLog->info("PDF内容已生成，准备打开预览");
 
     // 打开文件进行预览前，添加一个小延迟，确保文件完全写入和释放
     QThread::msleep(300); // 延迟300毫秒
     qApp->processEvents(); // 再次处理事件
 
     // 检查文件是否存在且可读，而不是直接打开
-    qDebug() << "准备打开预览前 - 临时文件路径：" << tempFileName;
-    qDebug() << "准备打开预览前 - 临时文件是否存在：" << QFile::exists(tempFileName);
+    myLog->info(QString("准备打开预览前 - 临时文件路径：%1").arg(tempFileName));
+    myLog->info(QString("准备打开预览前 - 临时文件是否存在：%1").arg(QFile::exists(tempFileName) ? "是" : "否"));
 
     QFileInfo fileInfo(tempFileName);
     if (fileInfo.exists() && fileInfo.isReadable()) {
@@ -1140,15 +1145,17 @@ void PDFGenerator::managePDFReport(const QString &defaultFileName,
         // 自动打开PDF文件进行预览
         QUrl url = QUrl::fromLocalFile(tempFileName);
         if (!QDesktopServices::openUrl(url)) {
-            qWarning("无法打开PDF文件进行预览");
+            myLog->warn("无法打开PDF文件进行预览");
             if (parent) {
                 QMessageBox::warning(parent, "警告", "无法打开PDF预览，请手动查看临时文件：\n" + tempFileName);
+                myLog->info(QString("显示警告消息框：无法打开PDF预览，请手动查看临时文件：%1").arg(tempFileName));
             }
         }
     } else {
-        qWarning("文件仍然被锁定，无法打开预览");
+        myLog->warn("文件仍然被锁定，无法打开预览");
         if (parent) {
             QMessageBox::warning(parent, "警告", "PDF文件被锁定，无法打开预览。请稍后重试。");
+            myLog->info("显示警告消息框：PDF文件被锁定，无法打开预览。请稍后重试。");
         }
     }
 
@@ -1158,6 +1165,7 @@ void PDFGenerator::managePDFReport(const QString &defaultFileName,
         QMessageBox::StandardButton reply;
         reply = QMessageBox::question(nullptr, "保存PDF", "是否保存此PDF文件？",
                                      QMessageBox::Save | QMessageBox::Discard);
+        myLog->info("显示问题消息框：是否保存此PDF文件？");
 
         if (reply == QMessageBox::Save) {
             // 用户选择保存，打开文件保存对话框
@@ -1175,17 +1183,17 @@ void PDFGenerator::managePDFReport(const QString &defaultFileName,
                     QThread::msleep(delayMs); // 每次重试前的延迟递增
                     qApp->processEvents(); // 处理事件，确保文件系统操作正常
 
-                    qDebug() << "尝试复制文件（" << retryCount + 1 << "/" << maxRetries << ")，延迟：" << delayMs << "ms";
-                    qDebug() << "源文件：" << tempFileName;
-                    qDebug() << "目标文件：" << saveFileName;
-                    qDebug() << "源文件是否存在：" << QFile::exists(tempFileName);
-                    qDebug() << "目标文件是否存在：" << QFile::exists(saveFileName);
+                    myLog->info(QString("尝试复制文件（%1/%2），延迟：%3ms").arg(retryCount + 1).arg(maxRetries).arg(delayMs));
+                    myLog->info(QString("源文件：%1").arg(tempFileName));
+                    myLog->info(QString("目标文件：%1").arg(saveFileName));
+                    myLog->info(QString("源文件是否存在：%1").arg(QFile::exists(tempFileName) ? "是" : "否"));
+                    myLog->info(QString("目标文件是否存在：%1").arg(QFile::exists(saveFileName) ? "是" : "否"));
 
                     // 如果目标文件存在，先尝试删除它
                     if (QFile::exists(saveFileName)) {
-                        qDebug() << "目标文件已存在，尝试删除";
+                        myLog->info("目标文件已存在，尝试删除");
                         if (!QFile::remove(saveFileName)) {
-                            qWarning() << "无法删除现有文件，可能被其他程序占用";
+                            myLog->warn("无法删除现有文件，可能被其他程序占用");
                             retryCount++;
                             continue;
                         }
@@ -1193,11 +1201,11 @@ void PDFGenerator::managePDFReport(const QString &defaultFileName,
 
                     if (QFile::copy(tempFileName, saveFileName)) {
                         copied = true;
-                        qDebug() << "PDF文件已保存到：" << saveFileName;
+                        myLog->info(QString("PDF文件已保存到：%1").arg(saveFileName));
 //                        QMessageBox::information(nullptr, "成功", "PDF文件已保存\n" + saveFileName);
                     } else {
                         retryCount++;
-                        qWarning() << "无法保存PDF文件到指定位置，正在重试（" << retryCount << "/" << maxRetries << ")";
+                        myLog->warn(QString("无法保存PDF文件到指定位置，正在重试（%1/%2）").arg(retryCount).arg(maxRetries));
                     }
                 }
 
@@ -1220,9 +1228,9 @@ void PDFGenerator::managePDFReport(const QString &defaultFileName,
         QTimer::singleShot(2000, [=]() {
             if (QFile::exists(tempFileName)) {
                 if (QFile::remove(tempFileName)) {
-                    qDebug() << "已删除临时PDF文件";
+                    myLog->info("已删除临时PDF文件");
                 } else {
-                    qDebug() << "无法删除临时PDF文件，可能被其他程序占用";
+                    myLog->warn("无法删除临时PDF文件，可能被其他程序占用");
                     // 不显示错误消息，因为这是正常现象
                 }
             }
@@ -1235,7 +1243,7 @@ void PDFGenerator::managePDFReport(const QString &defaultFileName,
 
 void PDFGenerator::generateAndManagePDFwithTableModel(const QString &title, QAbstractItemModel *model, const QString &remarks)
 {
-    qDebug() << "开始生成Form_page3的PDF报告";
+    myLog->info("开始生成Form_page3的PDF报告");
         
     // 检查是否获取到了必要的模型数据
     if (!model) {
@@ -1384,7 +1392,7 @@ bool PDFGenerator::generateMultiPagePDFWithItemsResultList(const QList<chk_items
         
         // 检查数据列表是否为空
         if (dataList.isEmpty()) {
-            qWarning() << "数据列表为空，跳过结果集: " << title;
+            myLog->warn(QString("数据列表为空，跳过结果集: %1").arg(title));
             delete model;
             continue;
         }

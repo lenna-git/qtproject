@@ -42,6 +42,7 @@ SOURCES += \
     form_page1.cpp \
     form_page2.cpp \
     pdfgenerator/pdfgenerator.cpp \
+    pdfgenerator/pdfgenerator_fix.cpp \
     form_page3.cpp \
     chkresultclass/chk_singleitem_result.cpp \
     chkresultclass/chk_items_result.cpp \
