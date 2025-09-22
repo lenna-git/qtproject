@@ -11,15 +11,19 @@
 #include "pdfgenerator/pdfgenerator.h"
 #include "chkresultclass/chk_items_result.h"
 #include "log4qt/logger.h"
+#include"log4qt/logger.h"
+#include"log4qt/log4qt.h"
+
+using Log4Qt::Logger;
+extern Logger* myLog;
 
 Form_page3::Form_page3(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::Form_page3),
     mTableViewModel(new QStandardItemModel),
-    mTableGenerator(new TableGenerator),
-    mLogger(Log4Qt::Logger::logger("Form_page3"))
+    mTableGenerator(new TableGenerator)
 {
-    mLogger->info("Form_page3构造函数初始化开始");
+    myLog->info("Form_page3构造函数初始化开始");
     ui->setupUi(this);
     QVBoxLayout *alllayout = new QVBoxLayout(this);
     ui->lineEdit->setVisible(false);
@@ -45,7 +49,7 @@ Form_page3::Form_page3(QWidget *parent) :
                 );
 
     paintTable_all();
-    mLogger->info("Form_page3构造函数初始化完成");
+    myLog->info("Form_page3构造函数初始化完成");
 }
 
 Form_page3::~Form_page3()
@@ -320,7 +324,7 @@ void Form_page3::paintTable_all()
 
 void Form_page3::on_pushButton_2_clicked()
 {
-    mLogger->info("on_pushButton_2_clicked开始执行PDF生成功能");    
+    myLog->info("on_pushButton_2_clicked开始执行PDF生成功能");
     // 获取界面中的标题、备注信息和已有的数据列表
     QString title = ui->label->text();
     QString remarks = ui->textEdit->toPlainText();
@@ -329,16 +333,16 @@ void Form_page3::on_pushButton_2_clicked()
     // 调用PDFGenerator中的新方法，使用数据列表和表头直接生成PDF
     bool result = PDFGenerator::generateSinglePDFWithDataList(title, datalist, mHeader, remarks);
     
-    // 使用Log4Qt记录PDF生成结果
-    mLogger->info(QString("PDF生成结果: %1").arg(result ? "成功" : "失败"));
+    // 打印生成结果信息
+    myLog->info(QString("PDF生成结果: %1").arg(result ? "成功" : "失败"));
     
-    mLogger->info("on_pushButton_2_clicked执行完成");
+    myLog->info("on_pushButton_2_clicked函数执行完毕");
 
 }
 
 void Form_page3::on_pushButton_3_clicked()
 {
-    mLogger->info("开始执行on_pushButton_3_clicked函数");
+    myLog->info("开始执行on_pushButton_3_clicked函数");
 
     // 初始化一个size为7的QList<chk_items_result>（原3个+新增4个）
     QList<chk_items_result *> itemsResultList;
@@ -410,10 +414,10 @@ void Form_page3::on_pushButton_3_clicked()
         itemsResultList<<itemResult;
     }
     
-    mLogger->info(QString("初始化的QList<chk_items_result>大小: %1").arg(itemsResultList.size()));
+    myLog->info(QString("初始化的QList<chk_items_result>大小: %1").arg(itemsResultList.size()));
     
 //    chk_items_result *test = itemsResultList.at(1);
 
     PDFGenerator::generateAndManageMultiPagePDFWithItemsResultList(itemsResultList);
-    mLogger->info("on_pushButton_3_clicked函数执行完毕");
+    myLog->info("on_pushButton_3_clicked函数执行完毕");
 }

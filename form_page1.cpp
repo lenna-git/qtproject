@@ -24,6 +24,11 @@
 #include <QThread>
 #include <QTimer>
 #include<QIODevice>
+#include"log4qt/logger.h"
+#include"log4qt/log4qt.h"
+
+using Log4Qt::Logger;
+extern Logger* myLog;
 
 Form_page1::Form_page1(QWidget *parent) :
     QWidget(parent),

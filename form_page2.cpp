@@ -9,6 +9,11 @@
 #include <QGraphicsView>
 #include <QGraphicsScene>
 #include <QPixmap>
+#include"log4qt/logger.h"
+#include"log4qt/log4qt.h"
+
+using Log4Qt::Logger;
+extern Logger* myLog;
 
 Form_page2::Form_page2(QWidget *parent) :
     QWidget(parent),

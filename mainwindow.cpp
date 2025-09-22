@@ -3,6 +3,11 @@
 #include<QHBoxLayout>
 #include<QVBoxLayout>
 #include<QWidget>
+#include"log4qt/logger.h"
+#include"log4qt/log4qt.h"
+
+using Log4Qt::Logger;
+extern Logger* myLog;
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),

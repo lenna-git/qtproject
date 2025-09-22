@@ -48,6 +48,11 @@ build-*
 *.gcov
 
 # 其他
+
+# 第三方库
+external/
+dependencies/
+log4qt/
 *.autosave
 *.backup
 *.old

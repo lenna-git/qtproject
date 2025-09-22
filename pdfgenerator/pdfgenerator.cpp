@@ -26,7 +26,11 @@
 #include<QStandardItemModel>
 #include "../chkresultclass/chk_singleitem_result.h"
 #include "../chkresultclass/chk_items_result.h"
+#include"log4qt/logger.h"
+#include"log4qt/log4qt.h"
 
+using Log4Qt::Logger;
+extern Logger* myLog;
 
 PDFGenerator::PDFGenerator(QObject *parent) : QObject(parent)
 {

@@ -11,9 +11,15 @@ greaterThan(QT_MAJOR_VERSION, 4) {
     QT += printsupport
 }
 
-# 添加log4qt框架
-CONFIG += log4qt
+# 添加log4qt框架，适配Qt 5.9.1
+
 include($$PWD/log4qt/src/log4qt/log4qt.pri)
+
+# Qt 5.9.1兼容性设置
+lessThan(QT_MAJOR_VERSION, 6):lessThan(QT_MINOR_VERSION, 12) {
+    DEFINES += LOG4QT_NO_QML_SUPPORT
+    DEFINES += LOG4QT_NO_DATABASE_APPENDER
+}
 
 TARGET = test2
 TEMPLATE = app

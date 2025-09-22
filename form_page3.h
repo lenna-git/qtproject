@@ -5,7 +5,7 @@
 #include<QStandardItemModel>
 #include"chkresultclass/chk_singleitem_result.h"
 #include"tablegenerator/tablegenerator.h"
-#include"log4qt/logger.h"
+
 
 namespace Ui {
 class Form_page3;
@@ -25,7 +25,7 @@ private:
     QStringList mHeader;
     QList<chk_singleitem_result *> datalist;
     TableGenerator *mTableGenerator;
-    Log4Qt::Logger *mLogger;
+
 
     void paintTable_all();
 
