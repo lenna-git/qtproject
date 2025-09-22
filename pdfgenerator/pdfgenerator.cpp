@@ -277,15 +277,16 @@ bool PDFGenerator::generateReportPDFWith6Projects(const QString &fileName, const
     painter.drawLine(tableLeft + col1Width, currentY, tableLeft + col1Width, currentY + lineHeight * 3);
     painter.drawLine(tableLeft, currentY + lineHeight * 3, tableLeft + tableWidth, currentY + lineHeight * 3);
 
-    // 填写备注 - 支持多行显示
-    painter.drawText(QRectF(tableLeft, currentY, col1Width, lineHeight * 3), Qt::AlignCenter | Qt::TextWordWrap, "备 注");
-    painter.drawText(QRectF(tableLeft + col1Width, currentY, tableWidth - col1Width, lineHeight * 3), Qt::AlignLeft | Qt::TextWordWrap, content.remarks);
-
+    // 填写备注 - 备注二应该回到左边单元格
+    painter.drawText(QRectF(tableLeft, currentY, col1Width, lineHeight * 3), Qt::AlignCenter | Qt::TextWordWrap, "备 注\n" + content.remarks);
+    
     // 计算从表格顶部到备注底部的准确高度
     qreal tableFinalHeight = currentY + lineHeight * 3 - tableTop;
     
-    // 绘制表格外边框
+    // 绘制表格外边框，并确保底部边框完整显示
     painter.drawRect(tableLeft, tableTop, tableWidth, tableFinalHeight);
+    // 单独绘制底部边框以确保完整显示
+    painter.drawLine(tableLeft, currentY + lineHeight * 3, tableLeft + tableWidth, currentY + lineHeight * 3);
 
     // 显示附加说明文字
     qreal additionalNoteY = currentY + lineHeight * 3; // 直接基于备注部分的结束位置
