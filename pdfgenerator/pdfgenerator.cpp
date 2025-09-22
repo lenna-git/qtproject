@@ -593,18 +593,18 @@ bool PDFGenerator::generateReportPDF(const QString &fileName, const ReportConten
     // 绘制检验项目部分
     currentY += lineHeight;
     painter.drawLine(tableLeft, currentY, tableLeft + tableWidth, currentY);
-    painter.drawLine(tableLeft + col1Width, currentY, tableLeft + col1Width, currentY + lineHeight * 9); // 第一列垂直分隔线（已增加到150宽度）
-    painter.drawLine(tableLeft + col1Width + 80, currentY, tableLeft + col1Width + 80, currentY + lineHeight * 9); // 序号列垂直分隔线（固定宽度80）
-    painter.drawLine(tableLeft + col1Width + 80 + 150, currentY, tableLeft + col1Width + 80 + 150, currentY + lineHeight * 9); // 项目名称列垂直分隔线（调整宽度到150）
+    painter.drawLine(tableLeft + col1Width, currentY, tableLeft + col1Width, currentY + lineHeight * 10); // 第一列垂直分隔线，支持10个项目
+    painter.drawLine(tableLeft + col1Width + 80, currentY, tableLeft + col1Width + 80, currentY + lineHeight * 10); // 序号列垂直分隔线
+    painter.drawLine(tableLeft + col1Width + 80 + 150, currentY, tableLeft + col1Width + 80 + 150, currentY + lineHeight * 10); // 项目名称列垂直分隔线
 
     // 填写检验项目内容
     int projectCount = qMin(content.projectNames.size(), content.projectResults.size());
     
     // 先绘制第一列的合并单元格文本 - 现在可以显示4个中文字符
-    painter.drawText(QRectF(tableLeft, currentY, col1Width, lineHeight * 9), Qt::AlignCenter | Qt::TextWordWrap, "检验项目");
+    painter.drawText(QRectF(tableLeft, currentY, col1Width, lineHeight * 10), Qt::AlignCenter | Qt::TextWordWrap, "检验项目");
     
-    // 循环绘制9行内容
-    for (int i = 0; i < 9; i++) {
+    // 循环绘制10行内容
+    for (int i = 0; i < 10; i++) {
         currentY += lineHeight;
         // 绘制其他三列的行分隔线（不包括检验项目列）
         painter.drawLine(tableLeft + col1Width, currentY, tableLeft + tableWidth, currentY);
