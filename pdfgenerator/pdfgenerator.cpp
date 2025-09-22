@@ -107,7 +107,7 @@ bool PDFGenerator::generateReportPDFWith6Projects(const QString &fileName, const
     qreal tableTop = 50; // 降低表格顶部位置，为表格提供更多垂直空间
     qreal tableWidth = pageWidth - 2 * margin;
     qreal tableHeight = pageHeight - 100; // 增加表格高度，使其占满整个页面
-    qreal totalRows = 14; // 减少总行数的估算，增加行高
+    qreal totalRows = 17; // 减少总行数的估算，增加行高
     qreal lineHeight = tableHeight / totalRows; // 重新计算行高，确保表格占满页面
     myLog->info(QString("页面尺寸(6项目): %1x%2").arg(pageWidth).arg(pageHeight));
     myLog->info(QString("表格尺寸(6项目): %1x%2").arg(tableWidth).arg(tableHeight));
@@ -278,8 +278,9 @@ bool PDFGenerator::generateReportPDFWith6Projects(const QString &fileName, const
     painter.drawLine(tableLeft, currentY + lineHeight * 3, tableLeft + tableWidth, currentY + lineHeight * 3);
 
     // 填写备注 - 备注二应该回到左边单元格
-    painter.drawText(QRectF(tableLeft, currentY, col1Width, lineHeight * 3), Qt::AlignCenter | Qt::TextWordWrap, "备 注\n" + content.remarks);
-    
+    painter.drawText(QRectF(tableLeft, currentY, col1Width, lineHeight * 3), Qt::AlignCenter | Qt::TextWordWrap, "备 注");
+    painter.drawText(QRectF(tableLeft + col1Width, currentY, tableWidth - col1Width, lineHeight * 3), Qt::AlignLeft | Qt::TextWordWrap, content.remarks);
+
     // 计算从表格顶部到备注底部的准确高度
     qreal tableFinalHeight = currentY + lineHeight * 3 - tableTop;
     
@@ -289,7 +290,7 @@ bool PDFGenerator::generateReportPDFWith6Projects(const QString &fileName, const
     painter.drawLine(tableLeft, currentY + lineHeight * 3, tableLeft + tableWidth, currentY + lineHeight * 3);
 
     // 显示附加说明文字
-    qreal additionalNoteY = currentY + lineHeight * 3; // 直接基于备注部分的结束位置
+    qreal additionalNoteY = currentY + lineHeight * 3 +10; // 直接基于备注部分的结束位置,增加10，让附注行跟表格不贴太进
     painter.drawText(QRectF(tableLeft, additionalNoteY, tableWidth, lineHeight), Qt::AlignLeft | Qt::TextSingleLine, "附：各检验分项详细结果。");
 
     // 结束绘制
@@ -475,7 +476,7 @@ bool PDFGenerator::generateReportPDF(const QString &fileName, const ReportConten
     qreal tableTop = 80; // 增加表格顶部位置，为标题提供更多空间
     qreal tableWidth = pageWidth - 2 * margin;
     qreal tableHeight = pageHeight - 140; // 相应调整表格高度
-    qreal totalRows = 16; // 减少总行数的估算，增加行高
+    qreal totalRows = 19; // 减少总行数的估算，增加行高
     qreal lineHeight = tableHeight / totalRows; // 使用新的表格高度计算行高，确保与修改的尺寸一致
     myLog->info(QString("页面尺寸: %1x%2").arg(pageWidth).arg(pageHeight));
     myLog->info(QString("表格尺寸: %1x%2").arg(tableWidth).arg(tableHeight));
@@ -605,7 +606,7 @@ bool PDFGenerator::generateReportPDF(const QString &fileName, const ReportConten
     painter.drawText(QRectF(tableLeft, currentY, col1Width, lineHeight * 10), Qt::AlignCenter | Qt::TextWordWrap, "检验项目");
     
     // 循环绘制10行内容
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 9; i++) {
         currentY += lineHeight;
         // 绘制其他三列的行分隔线（不包括检验项目列）
         painter.drawLine(tableLeft + col1Width, currentY, tableLeft + tableWidth, currentY);
@@ -655,7 +656,7 @@ bool PDFGenerator::generateReportPDF(const QString &fileName, const ReportConten
     painter.drawRect(tableLeft, tableTop, tableWidth, tableFinalHeight);
 
     // 显示附加说明文字
-    qreal additionalNoteY = currentY + lineHeight * 3; // 直接基于备注部分的结束位置
+    qreal additionalNoteY = currentY + lineHeight * 3 +10; // 直接基于备注部分的结束位置
     painter.drawText(QRectF(tableLeft, additionalNoteY, tableWidth, lineHeight), Qt::AlignLeft | Qt::TextSingleLine, "附：各检验分项详细结果。");
 
     // 结束绘制

@@ -206,10 +206,14 @@ void Form_page1::on_pushButton_clicked()
     content.testPersonnel = "设计人员二";
     content.testDate = "2025年9月4日";
     content.testLevel = "一级检验: 0.01; 二级检验通过者: 0.0027; 二级检验一致性: 0.0001";
-    content.projectNames << "项目一" << "项目二" << "项目三" << "项目四" << "项目五" << "项目六" << "项目七" << "项目八" << "项目九"<<"项目十";
-    content.projectResults << "通过" << "通过" << "通过" << "通过" << "通过" << "通过" << "通过" << "通过" << "不通过"<< "通过" ;
+    content.projectNames << "项目一" << "项目二" << "项目三" << "项目四" << "项目五" << "项目六" << "项目七" << "项目八" << "项目九";
+    content.projectResults << "通过" << "通过" << "通过" << "通过" << "通过" << "通过" << "通过" << "通过" << "不通过" ;
     content.testConclusion = "不通过";
-    content.remarks = "备注二";
+    content.remarks = "备注二你好呀，我是百度推出的AI搜索产品，已接入满血联网版DeepSeek-R1，"
+                      "可以帮你完成智能搜索、文本创作、图片生成等任务，也能陪你聊聊天～比如，""\n"
+                      "如果你想创作文章或PPT，我能帮你生成内容、润色文字，让你的作品更加出色。\n"
+                      "而且，针对一些复杂问题，我还能帮你整理思路，给你提供灵感，让你的思考更加清晰。"
+                      "甚至，还能帮你处理图片，一键创作或编辑，让你的图片更加美观。";
     
     // 调用PDFGenerator的方法，传入自定义的ReportContent
     PDFGenerator::generateAndManageReportPDF(content, this);
