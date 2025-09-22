@@ -11,6 +11,10 @@ greaterThan(QT_MAJOR_VERSION, 4) {
     QT += printsupport
 }
 
+# 添加log4qt框架
+CONFIG += log4qt
+include($$PWD/log4qt/src/log4qt/log4qt.pri)
+
 TARGET = test2
 TEMPLATE = app
 

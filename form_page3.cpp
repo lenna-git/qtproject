@@ -10,13 +10,16 @@
 #include<QThread>
 #include "pdfgenerator/pdfgenerator.h"
 #include "chkresultclass/chk_items_result.h"
+#include "log4qt/logger.h"
 
 Form_page3::Form_page3(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::Form_page3),
     mTableViewModel(new QStandardItemModel),
-    mTableGenerator(new TableGenerator)
+    mTableGenerator(new TableGenerator),
+    mLogger(Log4Qt::Logger::logger("Form_page3"))
 {
+    mLogger->info("Form_page3构造函数初始化开始");
     ui->setupUi(this);
     QVBoxLayout *alllayout = new QVBoxLayout(this);
     ui->lineEdit->setVisible(false);
@@ -42,6 +45,7 @@ Form_page3::Form_page3(QWidget *parent) :
                 );
 
     paintTable_all();
+    mLogger->info("Form_page3构造函数初始化完成");
 }
 
 Form_page3::~Form_page3()
@@ -316,7 +320,7 @@ void Form_page3::paintTable_all()
 
 void Form_page3::on_pushButton_2_clicked()
 {
-    qDebug()<<"on_pushButton_2_clicked开始执行PDF生成功能";    
+    mLogger->info("on_pushButton_2_clicked开始执行PDF生成功能");    
     // 获取界面中的标题、备注信息和已有的数据列表
     QString title = ui->label->text();
     QString remarks = ui->textEdit->toPlainText();
@@ -325,17 +329,16 @@ void Form_page3::on_pushButton_2_clicked()
     // 调用PDFGenerator中的新方法，使用数据列表和表头直接生成PDF
     bool result = PDFGenerator::generateSinglePDFWithDataList(title, datalist, mHeader, remarks);
     
-    // 已移除PDF生成结果弹窗提示
-    // 如果需要调试信息，可以通过qDebug查看结果
-    qDebug() << "PDF生成结果: " << (result ? "成功" : "失败");
+    // 使用Log4Qt记录PDF生成结果
+    mLogger->info(QString("PDF生成结果: %1").arg(result ? "成功" : "失败"));
     
-    qDebug()<<"on_pushButton_2_clicked执行完成";
+    mLogger->info("on_pushButton_2_clicked执行完成");
 
 }
 
 void Form_page3::on_pushButton_3_clicked()
 {
-    qDebug()<<"on_pushButton_3_clicked";
+    mLogger->info("开始执行on_pushButton_3_clicked函数");
 
     // 初始化一个size为7的QList<chk_items_result>（原3个+新增4个）
     QList<chk_items_result *> itemsResultList;
@@ -407,10 +410,10 @@ void Form_page3::on_pushButton_3_clicked()
         itemsResultList<<itemResult;
     }
     
-    qDebug() << "初始化的QList<chk_items_result>大小: " << itemsResultList.size();
+    mLogger->info(QString("初始化的QList<chk_items_result>大小: %1").arg(itemsResultList.size()));
     
 //    chk_items_result *test = itemsResultList.at(1);
 
     PDFGenerator::generateAndManageMultiPagePDFWithItemsResultList(itemsResultList);
-    qDebug() << "on_pushButton_3_clicked函数执行完毕";
+    mLogger->info("on_pushButton_3_clicked函数执行完毕");
 }
