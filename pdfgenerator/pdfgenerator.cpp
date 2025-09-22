@@ -408,7 +408,7 @@ bool PDFGenerator::generateTablePDF(const QString &fileName, QWidget *parent)
     return true;
 }
 
-// 为Form_page1绘制PDF报告（接受自定义内容）
+// 为Form_page1绘制PDF报告（接受自定义内容,）
 bool PDFGenerator::generateReportPDF(const QString &fileName, const ReportContent &content, QWidget *parent)
 {
 
