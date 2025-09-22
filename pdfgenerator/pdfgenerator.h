@@ -44,29 +44,29 @@ public:
     explicit PDFGenerator(QObject *parent = nullptr);
 
 
-// 为Form_page1生成PDF报告（接受自定义内容，支持9个检验项目）
+// 生成PDF检验总表报告（接受自定义内容，支持9个检验项目）
 static bool generateReportPDFWith9Projects(const QString &fileName, const ReportContent &content, QWidget *parent = nullptr);
 
-// 生成只有6个检验项目的PDF报告
+// 生成只有6个检验项目的PDF检验总表报告
 static bool generateReportPDFWith6Projects(const QString &fileName, const ReportContent &content, QWidget *parent = nullptr);
 
 // 为Form_page2生成表格PDF
 static bool generateTablePDF(const QString &fileName, QWidget *parent = nullptr);
 
-// 生成包含表格模型的单个PDF报告
+// 生成单个项目PDF检验报告，输入参数为表格的model
 static bool generateSinglePDFwithTableModel(const QString &title, QAbstractItemModel *model, const QString &remarks, const QString &fileName = "");
 
-// 新函数：根据标题、datalist、表头和备注生成PDF，自动转换datalist为model
+// 新函数：根据标题、datalist、表头和备注生成单个项目PDF检验，自动转换datalist为model，其中datalist为表格每一行的内容
     static bool generateSinglePDFWithDataList(const QString &title, const QList<chk_singleitem_result *> &dataList, const QStringList &mheader, const QString &remarks, const QString &fileName = "");
     
-    // 根据chk_items_result列表生成多页PDF报告
+    // 根据chk_items_result列表生成多页PDF报告（用户生成检验后的所有分表）
     static bool generateMultiPagePDFWithItemsResultList(const QList<chk_items_result *> &itemsResultList, const QString &fileName = "");
     
     // 生成多页PDF文件，预览并询问是否保存
     static void generateAndManageMultiPagePDFWithItemsResultList(const QList<chk_items_result *> &itemsResultList);
 
-// 生成临时PDF文件，预览并询问是否保存（用于Form_page1，接受自定义内容）
-static void generateAndManageReportPDF(const ReportContent &content, QWidget *parent = nullptr);
+// 生成临时PDF文件，预览并询问是否保存（用于Form_page1，接受自定义内容，支持9个检验项目）
+static void generateAndManageReportPDFWith9Projects(const ReportContent &content, QWidget *parent = nullptr);
 
     // 生成临时PDF文件，预览并询问是否保存（用于Form_page1，只有6个检验项目）
 static void generateAndManageReportPDFWith6Projects(const ReportContent &content, QWidget *parent = nullptr);

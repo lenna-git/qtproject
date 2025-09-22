@@ -1070,7 +1070,7 @@ void PDFGenerator::generateAndManageReportPDFWith6Projects(const ReportContent &
 }
 
 // Form_page1生成9个检验项目的pdf
-void PDFGenerator::generateAndManageReportPDF(const ReportContent &content, QWidget *parent)
+void PDFGenerator::generateAndManageReportPDFWith9Projects(const ReportContent &content, QWidget *parent)
 {
     myLog->info("开始生成Form_page1的PDF报告");
     

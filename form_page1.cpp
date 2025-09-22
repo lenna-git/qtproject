@@ -216,7 +216,7 @@ void Form_page1::on_pushButton_clicked()
                       "甚至，还能帮你处理图片，一键创作或编辑，让你的图片更加美观。";
     
     // 调用PDFGenerator的方法，传入自定义的ReportContent
-    PDFGenerator::generateAndManageReportPDF(content, this);
+    PDFGenerator::generateAndManageReportPDFWith9Projects(content, this);
 }
 
 void Form_page1::on_pushButton_2_clicked()
