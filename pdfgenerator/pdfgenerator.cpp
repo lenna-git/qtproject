@@ -263,19 +263,14 @@ bool PDFGenerator::generateReportPDFWith6Projects(const QString &fileName, const
     }
 
     // 绘制检验结论行
+    currentY += lineHeight;
     painter.drawLine(tableLeft, currentY, tableLeft + tableWidth, currentY);
+    painter.drawLine(tableLeft + col1Width, currentY, tableLeft + col1Width, currentY + lineHeight);
     painter.drawLine(tableLeft, currentY + lineHeight, tableLeft + tableWidth, currentY + lineHeight);
+    // 填写检验结论
+    painter.drawText(QRectF(tableLeft, currentY, col1Width, lineHeight), Qt::AlignCenter | Qt::TextSingleLine, "检验结论");
+    painter.drawText(QRectF(tableLeft + col1Width, currentY, tableWidth - col1Width, lineHeight), Qt::AlignCenter | Qt::TextSingleLine, content.testConclusion);
 
-    // 检查是否需要合并单元格
-    if (content.testConclusion.contains("不通过")) {
-        // 不绘制中间分隔线，合并单元格居中显示
-        painter.drawText(QRectF(tableLeft, currentY, tableWidth, lineHeight), Qt::AlignCenter | Qt::TextSingleLine, "检验结论：" + content.testConclusion);
-    } else {
-        // 保留原有分隔线和格式
-        painter.drawLine(tableLeft + col1Width, currentY, tableLeft + col1Width, currentY + lineHeight);
-        painter.drawText(QRectF(tableLeft, currentY, col1Width, lineHeight), Qt::AlignCenter | Qt::TextSingleLine, "检验结论");
-        painter.drawText(QRectF(tableLeft + col1Width, currentY, tableWidth - col1Width, lineHeight), Qt::AlignCenter | Qt::TextSingleLine, content.testConclusion);
-    }
 
     // 绘制备注行 - 高度调整为3行
     currentY += lineHeight;
@@ -611,7 +606,7 @@ bool PDFGenerator::generateReportPDFWith9Projects(const QString &fileName, const
     // 先绘制第一列的合并单元格文本 - 现在可以显示4个中文字符
     painter.drawText(QRectF(tableLeft, currentY, col1Width, lineHeight * 10), Qt::AlignCenter | Qt::TextWordWrap, "检验项目");
     
-    // 循环绘制10行内容
+    // 循环绘制9行内容
     for (int i = 0; i < 9; i++) {
         currentY += lineHeight;
         // 绘制其他三列的行分隔线（不包括检验项目列）
@@ -636,20 +631,16 @@ bool PDFGenerator::generateReportPDFWith9Projects(const QString &fileName, const
         }
     }
 
-    // 绘制检验结论行
-    painter.drawLine(tableLeft, currentY, tableLeft + tableWidth, currentY);
-    painter.drawLine(tableLeft, currentY + lineHeight, tableLeft + tableWidth, currentY + lineHeight);
 
-    // 检查是否需要合并单元格
-    if (content.testConclusion.contains("不通过")) {
-        // 不绘制中间分隔线，合并单元格居中显示
-        painter.drawText(QRectF(tableLeft, currentY, tableWidth, lineHeight), Qt::AlignCenter | Qt::TextSingleLine, "检验结论：" + content.testConclusion);
-    } else {
-        // 保留原有分隔线和格式
-        painter.drawLine(tableLeft + col1Width, currentY, tableLeft + col1Width, currentY + lineHeight);
-        painter.drawText(QRectF(tableLeft, currentY, col1Width, lineHeight), Qt::AlignCenter | Qt::TextSingleLine, "检验结论");
-        painter.drawText(QRectF(tableLeft + col1Width, currentY, tableWidth - col1Width, lineHeight), Qt::AlignCenter | Qt::TextSingleLine, content.testConclusion);
-    }
+    // 绘制检验结论行
+      currentY += lineHeight;
+      painter.drawLine(tableLeft, currentY, tableLeft + tableWidth, currentY);
+      painter.drawLine(tableLeft + col1Width, currentY, tableLeft + col1Width, currentY + lineHeight);
+      painter.drawLine(tableLeft, currentY + lineHeight, tableLeft + tableWidth, currentY + lineHeight);
+      // 填写检验结论
+      painter.drawText(QRectF(tableLeft, currentY, col1Width, lineHeight), Qt::AlignCenter | Qt::TextSingleLine, "检验结论");
+      painter.drawText(QRectF(tableLeft + col1Width, currentY, tableWidth - col1Width, lineHeight), Qt::AlignCenter | Qt::TextSingleLine, content.testConclusion);
+
 
     // 绘制备注行 - 高度调整为3行
     currentY += lineHeight;
